@@ -25,7 +25,7 @@
 
 ## Implement Testing: <Descriptive Subtitle Here> 
 ### Task: On Opening
-Expected Time to complete: x hrs
+Expected Time to complete: x+y hrs
 Description of expected work here 
 
 Itemized description of expected work here 
