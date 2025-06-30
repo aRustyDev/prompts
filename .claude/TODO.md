@@ -24,7 +24,8 @@
 # Week MM-DD-2025 
 
 ## Implement Testing: <Descriptive Subtitle Here> 
-### Task: On Opening 
+### Task: On Opening
+Expected Time to complete: x hrs
 Description of expected work here 
 
 Itemized description of expected work here 
@@ -57,8 +58,8 @@ High level description of code changes, minimal code examples
 ### Task: On Closing 
 High level description of total changes 
 Description of impact of work in this task on the project as a whole. 
-Total time spent: 
-Reason for time discrepency: 
+Total time spent: x hrs
+Reason for time discrepency: foo bar blah blah
 
 #### Lessons Learned 
 Description of lessons learned this week from challenges and their solutions.
