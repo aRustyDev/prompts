@@ -30,7 +30,7 @@ NOTE: times (estimated, actual, or total) should be formatted as 3w 4d 12h, and 
 Expected Time to complete: "x+y h" 
 Description of expected work here 
 
-Itemized description of expected work here 
+Expected Work: 
 - foo (x hrs) 
 - bar (y hrs) 
 
