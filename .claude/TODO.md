@@ -16,3 +16,46 @@
 - Add `/hunt plan` command; Iteratively develop plan to hunt based on exploration and clarification.
 - Add `/hunt discover` command; Begin using plan to hunt
 - Add `/jira war` command; record WAR in jira format
+  - Task(On Opening): Title, Expected Hours, Description of expected work
+  - Logged Work[n]: Date started, Time Spent, Work Description, related challenges discovered, related solutions implemented, description of related Research and exploration, code changs involved
+  - Task(On Closing): Title, Total Changes, Description of Impact, Lessons Learned Overall
+  - Format 
+```markdown 
+# Week MM-DD-2025 
+
+## Implement Testing: <Descriptive Subtitle Here> 
+### Task: On Opening 
+Description of expected work here 
+
+Itemized description of expected work here 
+- foo (x hrs) 
+- bar (y hrs) 
+
+### Logged work: foo 
+Date started: MM-DD-2025 
+Actual Time Spent: z hrs 
+Work Description after the fact, include unplanned work involved in completing this 
+
+#### Challenges 
+Description of challenges related to this item of logged work
+
+#### Solutions 
+Description of Solutions to the challenges in this item of logged work 
+
+#### Research & Exploration 
+Description of Research and Exploration conducted in relation to this logged work.
+
+#### Code Changes Involved 
+Lines of code Added/Removed 
+Files changed 
+High level description of code changes, minimal code examples 
+
+### Task: On Closing 
+High level description of total changes 
+Description of impact of work in this task on the project as a whole. 
+Total time spent: 
+Reason for time discrepency: 
+
+#### Lessons Learned 
+Description of lessons learned this week from challenges and their solutions.
+```
