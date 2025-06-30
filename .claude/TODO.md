@@ -21,7 +21,7 @@
   - Task(On Closing): Title, Total Changes, Description of Impact, Lessons Learned Overall
   - Format 
 ```markdown
-NOTE: time estimates should be formatted as 3w 4d 12h, and should be enclosed in quotes
+NOTE: times (estimated, actual, or total) should be formatted as 3w 4d 12h, and should be enclosed in quotes
 # Week MM-DD-2025 
 
 ## Implement Testing: <Descriptive Subtitle Here> 
