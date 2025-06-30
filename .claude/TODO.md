@@ -31,6 +31,8 @@ Itemized description of expected work here
 - foo (x hrs) 
 - bar (y hrs) 
 
+---
+
 ### Logged work: foo 
 Date started: MM-DD-2025 
 Actual Time Spent: z hrs 
@@ -49,6 +51,8 @@ Description of Research and Exploration conducted in relation to this logged wor
 Lines of code Added/Removed 
 Files changed 
 High level description of code changes, minimal code examples 
+
+---
 
 ### Task: On Closing 
 High level description of total changes 
