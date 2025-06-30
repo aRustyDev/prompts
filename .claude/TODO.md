@@ -15,3 +15,4 @@
 - Add `/hunt explore` command; Use configured data to begin preparatory hunt exploration and analysis (ie develop threat intel)
 - Add `/hunt plan` command; Iteratively develop plan to hunt based on exploration and clarification.
 - Add `/hunt discover` command; Begin using plan to hunt
+- Add `/jira war` command; record WAR in jira format
