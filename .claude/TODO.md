@@ -20,12 +20,13 @@
   - Logged Work[n]: Date started, Time Spent, Work Description, related challenges discovered, related solutions implemented, description of related Research and exploration, code changs involved
   - Task(On Closing): Title, Total Changes, Description of Impact, Lessons Learned Overall
   - Format 
-```markdown 
+```markdown
+NOTE: time estimates should be formatted as 3w 4d 12h, and should be enclosed in quotes
 # Week MM-DD-2025 
 
 ## Implement Testing: <Descriptive Subtitle Here> 
 ### Task: On Opening
-Expected Time to complete: x+y hrs
+Expected Time to complete: "x+y h" 
 Description of expected work here 
 
 Itemized description of expected work here 
