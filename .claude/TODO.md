@@ -52,8 +52,10 @@ Description of Research and Exploration conducted in relation to this logged wor
 
 #### Code Changes Involved 
 Lines of code Added/Removed 
-Files changed 
 High level description of code changes, minimal code examples 
+Files changed: x
+- path/to/file1
+- path/to/file2
 
 ---
 
