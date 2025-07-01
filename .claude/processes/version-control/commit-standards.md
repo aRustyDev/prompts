@@ -1,10 +1,12 @@
 ---
-module: CommitStandards
+name: Commit Standards
+module_type: process
 scope: persistent
-triggers: ["commit", "commit message", "version control", "git commit"]
-conflicts: []
-dependencies: ["DataSanitization", "IssueTracking"]
 priority: high
+triggers: ["commit", "git commit", "commit message", "conventional commits"]
+dependencies: ["core/defaults.md", "processes/security/data-sanitization.md"]
+conflicts: []
+version: 1.0.0
 ---
 
 # Commit Standards Process
@@ -15,279 +17,257 @@ Ensure all commits follow conventional standards, include proper issue reference
 ## Trigger
 Execute whenever code changes need to be committed to version control.
 
-## Prerequisites
-- Changes staged for commit
-- Issue number available (if applicable)
-- Pre-commit hooks configured
+## Commit Message Format
 
-## Steps
-
-### Step 1: Pre-commit Preparation
+### Structure
 ```
-1.1 Review changes to be committed:
-    ${version_control} diff --staged
+<type>(<scope>): <description>
 
-1.2 Ensure changes are atomic:
-    - One logical change per commit
-    - Related files committed together
-    - Unrelated changes separated
+[optional body]
 
-1.3 Determine commit impact:
-    - Will this close an issue?
-    - Is this a breaking change?
-    - Does this need documentation?
+[optional footer(s)]
 ```
 
-### Step 2: Commit Classification
-```
-2.1 Identify commit type:
-    - feat: New feature
-    - fix: Bug fix
-    - refactor: Code improvement (no behavior change)
-    - test: Adding/updating tests
-    - docs: Documentation only
-    - style: Formatting (no code change)
-    - perf: Performance improvement
-    - chore: Build process/auxiliary tools
-    - ci: CI/CD configuration
+### Type (Required)
+Must be one of:
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation only changes
+- **style**: Changes that do not affect code meaning (formatting, missing semicolons, etc)
+- **refactor**: Code change that neither fixes a bug nor adds a feature
+- **perf**: Code change that improves performance
+- **test**: Adding missing tests or correcting existing tests
+- **build**: Changes affecting build system or external dependencies
+- **ci**: Changes to CI configuration files and scripts
+- **chore**: Other changes that don't modify src or test files
+- **revert**: Reverts a previous commit
 
-2.2 Determine scope:
-    - Component affected (auth, api, ui)
-    - Module name
-    - Feature area
+### Scope (Optional)
+Component or area affected: auth, api, ui, core, etc.
 
-2.3 Check if breaking change:
-    - API changes
-    - Config format changes
-    - Behavior changes
-```
+### Description (Required)
+- Use imperative mood: "add" not "added" or "adds"
+- Don't capitalize first letter
+- No period at the end
+- Maximum 72 characters
 
-### Step 3: Message Composition
-```
-3.1 Format header line:
-    ${type}(${scope}): ${description}
+## Process Steps
 
-    Rules:
-    - Maximum 72 characters
-    - Present tense ("add" not "added")
-    - No period at end
-    - Clear and specific
+### 1. Stage Changes
+```bash
+# Review what will be committed
+${version_control} diff
 
-3.2 Add body if needed:
-    - Blank line after header
-    - Explain what and why (not how)
-    - Wrap at 72 characters
-    - Use bullet points if multiple items
+# Stage atomic changes
+${version_control} add ${files}
 
-3.3 Add footer references:
-    IF closes_issue:
-        Add: "Fixes #${issue_number}"
-    IF relates_to_issue:
-        Add: "Related to #${issue_number}"
-    IF breaking_change:
-        Add: "BREAKING CHANGE: ${description}"
+# Verify staged changes
+${version_control} status
 ```
 
-### Step 4: Sanitization Check
-```
-4.1 Execute: Process: DataSanitization
-    Input: Commit message and diff
+**Ensure**:
+- Changes are atomic (one logical change)
+- Related files committed together
+- Unrelated changes separated
 
-4.2 Review sanitized content:
-    - No sensitive data exposed
-    - No credentials in message
-    - No internal paths leaked
-```
+### 2. Determine Commit Type
+Analyze changes to select appropriate type:
+- New functionality → feat
+- Bug correction → fix
+- Code improvement without behavior change → refactor
+- Test additions/updates → test
 
-### Step 5: Execute Commit
-```
-5.1 Run commit command:
-    ${version_control} commit
+Check if this:
+- Closes an issue → Add "Fixes #X"
+- Relates to issue → Add "Related to #X"
+- Breaking change → Add "BREAKING CHANGE:" footer
 
-5.2 IF pre_commit_hooks_fail:
-    5.2.1 Capture failure output
-    5.2.2 Identify failure type:
-        - Linting errors
-        - Test failures
-        - Security issues
-        - Formatting problems
+### 3. Write Commit Message
 
-    5.2.3 Create/update tracking issue:
-        Execute: Process: IssueTracking
-        Title: "Pre-commit: ${failure_type}"
-        Labels: ['pre-commit', 'tooling']
+#### Header Line
+Format: `<type>(<scope>): <description>`
 
-    5.2.4 Document in issue:
-        - Full error message
-        - Files affected
-        - Attempted fixes
+Example: `feat(auth): add password reset functionality`
 
-    5.2.5 Fix the issues:
-        - Apply suggested fixes
-        - Re-run failed checks locally
-        - Verify fixes work
+#### Body (if needed)
+- Blank line after header
+- Explain what and why (not how)
+- Wrap at 72 characters
+- Use bullet points for multiple items
 
-    5.2.6 Update issue with solution:
-        - What caused the problem
-        - How it was fixed
-        - Lessons learned
+#### Footer
+- Issue references: `Fixes #123`
+- Breaking changes: `BREAKING CHANGE: explanation`
+- Co-authors: `Co-authored-by: Name <email>`
 
-    5.2.7 Check for pattern:
-        Execute: Process: RecurringProblemIdentification
-        Context: Pre-commit failure pattern
+### 4. Execute Commit
 
-    5.2.8 Retry commit
-
-5.3 ELSE commit_succeeds:
-    Continue to step 6
+#### Pre-commit Preparation
+```bash
+# If message contains sensitive data
+Execute: Process: DataSanitization
+Input: Commit message content
 ```
 
-### Step 6: Push Changes
-```
-6.1 Push to remote:
-    ${version_control} push
-
-6.2 IF push_fails:
-    Execute: Process: PushFailureResolution
-
-6.3 Verify push succeeded:
-    - Check remote repository
-    - Confirm CI/CD triggered
-    - Monitor initial status
+#### Run Commit
+```bash
+${version_control} commit
 ```
 
-### Step 7: Post-commit Tasks
-```
-7.1 Update issue tracking:
-    - Add commit reference to issue
-    - Update progress if applicable
-    - Close issue if completed
+#### If Pre-commit Hooks Fail
 
-7.2 If created pre-commit fix:
-    - Close pre-commit issue
-    - Link to main issue
-    - Document for future reference
+1. **Capture Failure**
+   - Record full error output
+   - Identify failure type (lint, test, format)
+
+2. **Create Tracking Issue**
+   ```
+   Title: "Pre-commit: ${failure_type} in ${context}"
+   Labels: ['pre-commit', 'tooling']
+   Body: 
+   - Error message (sanitized)
+   - Files affected
+   - Attempted solutions
+   ```
+
+3. **Fix Issues**
+   - Apply suggested fixes
+   - Re-run failed checks locally
+   - Document solution in issue
+
+4. **Check for Pattern**
+   If similar failure occurred before:
+   - Execute: Process: RecurringProblemIdentification
+   - Consider creating custom hook
+
+5. **Retry Commit**
+   - Stage fixes
+   - Attempt commit again
+
+### 5. Push Changes
+```bash
+${version_control} push
 ```
+
+If push fails:
+- Execute: Process: PushFailureResolution
+- Document resolution
+- Retry until successful
+
+### 6. Verify Success
+- Check remote repository
+- Ensure CI/CD triggered
+- Monitor pipeline status
 
 ## Message Examples
 
-### Feature Commit
+### Feature with Issue
 ```
-feat(auth): add two-factor authentication support
+feat(api): implement user search endpoint
 
-Implement TOTP-based 2FA with QR code generation for enhanced
-account security. Users can now enable 2FA in account settings.
-
-- Add TOTP library integration
-- Create QR code generation endpoint
-- Update auth middleware for 2FA checks
+Add full-text search capability for users with:
+- Email and name search
+- Pagination support
+- Result sorting options
 
 Fixes #234
 ```
 
-### Bug Fix Commit
+### Bug Fix
 ```
-fix(api): handle null values in user profile update
+fix(auth): prevent session timeout during active use
 
-Previous implementation threw NullPointerException when optional
-fields were cleared. Now properly handles null values and empty
-strings.
+Sessions were expiring even when user was actively using
+the system. Now properly extends session on each request.
 
-Fixes #456
+Fixes #567
 ```
 
-### Breaking Change Commit
+### Breaking Change
 ```
-refactor(config): restructure database configuration format
+refactor(api)!: change response format to camelCase
 
-BREAKING CHANGE: Database config now uses nested structure
-instead of flat keys. Migration guide in docs/migration-v2.md.
+BREAKING CHANGE: All API responses now use camelCase
+instead of snake_case. Update clients accordingly.
 
-Old format:
-  db_host: localhost
-  db_port: 5432
+Migration guide: docs/migrations/v2-api-changes.md
+```
 
-New format:
-  database:
-    host: localhost
-    port: 5432
+### Test-Driven Development
+```
+test(utils): add failing test for date parsing edge case
 
-Related to #789
+Documents expected behavior for leap year handling.
+Part of TDD red phase.
 ```
 
 ## Pre-commit Hook Patterns
 
-### Common Failures and Fixes
+### Common Failures
 
 #### Linting Errors
-```
-Problem: ESLint/Pylint violations
-Fix approach:
-1. Run linter with --fix flag
-2. Manual fix remaining issues
-3. Update code style guide if needed
+```bash
+# Auto-fix when possible
+npm run lint:fix
+# or
+black . --line-length 100
 ```
 
 #### Import Sorting
-```
-Problem: Imports not alphabetically sorted
-Fix approach:
-1. Use isort (Python) or import-sort (JS)
-2. Configure IDE to sort on save
-3. Add to pre-commit config
+```bash
+# Python
+isort .
+
+# JavaScript
+npx import-sort-cli --write '**/*.js'
 ```
 
 #### Trailing Whitespace
-```
-Problem: Lines end with spaces/tabs
-Fix approach:
-1. Configure editor to trim on save
-2. Use pre-commit's trailing-whitespace hook
-3. Run: find . -type f -exec sed -i 's/[ \t]*$//' {} \;
+```bash
+# Remove trailing whitespace
+find . -type f -name "*.py" -exec sed -i 's/[ \t]*$//' {} +
 ```
 
 ## Integration Points
-
-- **Uses**: Process: DataSanitization (for security)
-- **Uses**: Process: IssueTracking (for pre-commit issues)
-- **Uses**: Process: RecurringProblemIdentification (for patterns)
-- **Uses**: Process: PushFailureResolution (for push issues)
-- **Triggers**: CI/CD pipeline on successful push
-- **Updates**: Issue tracker with progress
+- Links to: Process: DataSanitization (message security)
+- Links to: Process: IssueUpdate (tracking commits)
+- Links to: Process: PushFailureResolution (push issues)
+- Triggers: CI/CD pipeline on successful push
 
 ## Best Practices
 
-### Do's
+### DO
 - ✅ Commit early and often
-- ✅ Make atomic commits
-- ✅ Write clear, descriptive messages
-- ✅ Reference issues consistently
+- ✅ Keep commits atomic
+- ✅ Write descriptive messages
+- ✅ Reference related issues
 - ✅ Fix pre-commit issues immediately
 
-### Don'ts
-- ❌ Commit commented-out code
-- ❌ Mix refactoring with features
-- ❌ Use generic messages like "fix bug"
+### DON'T
+- ❌ Mix unrelated changes
+- ❌ Use vague messages like "fix stuff"
 - ❌ Skip pre-commit hooks
 - ❌ Commit sensitive data
+- ❌ Leave broken tests
 
 ## Troubleshooting
 
-### Pre-commit Keeps Failing
-1. Run hooks manually: `pre-commit run --all-files`
-2. Check hook versions: `pre-commit autoupdate`
-3. Verify configuration syntax
-4. Test hooks individually
+### Amending Commits
+```bash
+# Fix the last commit message
+${version_control} commit --amend
 
-### Can't Push After Commit
-1. Check if remote has diverged
-2. Verify branch permissions
-3. Ensure authentication works
-4. Check for pre-push hooks
+# Add forgotten files to last commit
+${version_control} add forgotten_file
+${version_control} commit --amend --no-edit
+```
 
-### Wrong Issue Referenced
-1. Amend commit: `${version_control} commit --amend`
-2. Update message with correct issue
-3. Force push if already pushed (carefully!)
+### Reverting Commits
+```bash
+# Create a revert commit
+${version_control} revert <commit-sha>
+# Message: "revert: <original message>"
+```
 
-Remember: Good commit messages are a gift to your future self and your team. They provide context that code alone cannot convey.
+---
+*Consistent commit messages enable automation, improve collaboration, and create meaningful project history.*
