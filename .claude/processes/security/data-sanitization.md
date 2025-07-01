@@ -1,372 +1,384 @@
 ---
-module: DataSanitization
-scope: persistent
-triggers: ["sanitize", "clean data", "remove sensitive", "redact", "before posting"]
+name: Data Sanitization Process
+module_type: process
+scope: context
+priority: highest
+triggers: ["sanitize", "redact", "clean output", "remove sensitive", "mask data", "before posting"]
+dependencies: ["core/defaults.md", "processes/tooling/tool-selection.md"]
 conflicts: []
-dependencies: []
-priority: critical
+version: 1.0.0
 ---
 
 # Data Sanitization Process
 
 ## Purpose
-Remove or mask sensitive information before posting to any public or semi-public location, preventing accidental exposure of credentials, personal information, or system details that could compromise security or privacy.
+Remove or mask sensitive information before posting to any public or semi-public location. This process ensures no credentials, PII, or system information is exposed in issues, PRs, or documentation.
 
 ## Trigger
-Execute before:
-- Posting any content to issue trackers
-- Creating pull request descriptions
-- Committing code or messages
-- Sharing debug output
-- Posting error messages
-- Any external communication
+- Before any IssueUpdate
+- Before creating PRs or issues
+- Before posting error messages or logs
+- Before sharing debug output
+- When explicitly requested
 
-## Prerequisites
-- Content to be sanitized
-- Understanding of sensitivity context
-- Access to sanitization tools
+## Input
+Raw text that may contain sensitive information
 
-## Steps
+## Process Flow
 
-### Step 1: Content Type Assessment
-```
-1.1 Identify content format:
-    - Plain text → Use text sanitization tools
-    - JSON data → Use structure-aware tools
-    - Log files → Use log-specific patterns
-    - Code snippets → Use syntax-aware tools
-    - Error traces → Preserve structure while sanitizing
+### 1. Determine Content Type
+Identify the format and complexity of input:
 
-1.2 Determine sensitivity level:
-    - Public posting (GitHub, forums) → Maximum sanitization
-    - Internal team → Moderate sanitization
-    - Local only → Minimal sanitization
-
-1.3 Assess complexity:
-    - Simple patterns → Basic regex tools
-    - Nested structures → Advanced parsing
-    - Mixed content → Multiple passes
+```yaml
+content_types:
+  text:
+    - Plain text files
+    - Log outputs
+    - Error messages
+    - Command outputs
+  
+  json:
+    - Configuration files
+    - API responses
+    - Structured data
+  
+  structured_logs:
+    - Application logs
+    - System logs
+    - Debug traces
 ```
 
-### Step 2: Tool Selection
-```
-2.1 Select primary tool based on content:
+Assess complexity:
+- **Simple**: Single-line replacements, basic patterns
+- **Medium**: Multi-line patterns, context-aware
+- **Complex**: Nested structures, conditional logic
 
-    For simple text patterns:
-    - sed for basic replacements
-    - grep for pattern detection
+### 2. Select Sanitization Tool
 
-    For complex patterns:
-    - awk for structured text
-    - perl for advanced regex
+Execute: Process: ToolSelection with parameters:
+- tool_category: ${content_type}
+- complexity: ${assessed_complexity}
 
-    For structured data:
-    - jq for JSON
-    - yq for YAML
-    - xmlstarlet for XML
+Tool preference order (from core/defaults.md):
+```yaml
+text:
+  - sed (simple)
+  - awk (medium)  
+  - perl (complex)
+  - python (any)
 
-    For fallback:
-    - python for any complexity
+json:
+  - jq (any)
+  - python (any)
 
-2.2 Verify tool availability:
-    Check: command -v ${tool_name}
-    If unavailable, use next preference
-
-2.3 Prepare tool commands:
-    Based on ${sanitization_patterns} configuration
-```
-
-### Step 3: Pattern Detection
-```
-3.1 Scan for Personal Identifiable Information (PII):
-
-    Email addresses:
-    - Pattern: [\w\.-]+@[\w\.-]+\.\w+
-    - Replace with: <email>
-
-    Names in paths:
-    - /home/username/ → /home/<username>/
-    - /Users/johndoe/ → /Users/<username>/
-    - C:\Users\Alice\ → C:\Users\<username>\
-
-    Phone numbers:
-    - Pattern: [\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}
-    - Replace with: <phone>
-
-    Social Security Numbers:
-    - Pattern: \b\d{3}-\d{2}-\d{4}\b
-    - Replace with: <ssn-REDACTED>
-
-3.2 Scan for System Information:
-
-    IP addresses:
-    - Pattern: \b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b
-    - Replace with: <ip-address>
-    - Exception: Keep 127.0.0.1 and 0.0.0.0
-
-    Hostnames:
-    - Pattern: [a-zA-Z0-9\-]+\.(local|internal|corp)
-    - Replace with: <hostname>
-
-    MAC addresses:
-    - Pattern: ([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})
-    - Replace with: <mac-address>
-
-    Ports (when sensitive):
-    - Pattern: :(?!80|443|22|3000|8080)\d{2,5}
-    - Replace with: :<port>
-
-3.3 Scan for Credentials:
-
-    API keys:
-    - Pattern: (api[_-]?key|apikey|api_token)[\s:="']+([A-Za-z0-9\-_]{20,})
-    - Replace with: $1=<api-key-REDACTED>
-
-    Passwords:
-    - Pattern: (password|passwd|pwd)[\s:="']+([^\s"']+)
-    - Replace with: $1=<password>
-
-    Tokens:
-    - Pattern: (bearer|token|auth)[\s:="']+([A-Za-z0-9\-_\.]{20,})
-    - Replace with: $1 <token-REDACTED>
-
-    SSH keys:
-    - Pattern: -----BEGIN ([A-Z ]+) KEY-----[\s\S]+?-----END \1 KEY-----
-    - Replace with: <ssh-key-REDACTED>
-
-    Database URLs:
-    - Pattern: (postgres|mysql|mongodb)://[^:]+:[^@]+@[^/]+/\w+
-    - Replace with: $1://<user>:<password>@<host>/<database>
-
-3.4 Scan for Identifiers:
-
-    UUIDs:
-    - Pattern: [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
-    - Replace with: <uuid>
-
-    GUIDs:
-    - Pattern: \{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\}
-    - Replace with: <guid>
-
-    Session IDs:
-    - Pattern: (session[_-]?id|sid)[\s:="']+([A-Za-z0-9]{16,})
-    - Replace with: $1=<session-id>
+structured_logs:
+  - awk (medium)
+  - python (any)
 ```
 
-### Step 4: Multi-pass Sanitization
-```
-4.1 First pass - Critical credentials:
-    Priority: Remove immediately dangerous items
-    - API keys and tokens
-    - Passwords and secrets
-    - Private keys
-    - Database credentials
+### 3. Apply Sanitization Patterns
 
-4.2 Second pass - Personal information:
-    Priority: Protect privacy
-    - Email addresses
-    - Names and usernames
-    - Phone numbers
-    - Personal identifiers
+#### Multi-Pass Strategy
 
-4.3 Third pass - System details:
-    Priority: Prevent reconnaissance
-    - Internal hostnames
-    - IP addresses
-    - File paths with usernames
-    - Infrastructure details
+**Pass 1: Credentials and Keys**
+```bash
+# API Keys and Tokens
+s/(api[_-]?key|token|bearer)[\s:=]+["'`]?[\w\-]{20,}["'`]?/\1=<api-key-REDACTED>/gi
 
-4.4 Final pass - Context-specific:
-    Priority: Project-specific patterns
-    - Custom ID formats
-    - Internal project names
-    - Client information
-    - Proprietary data patterns
+# SSH Keys
+s/-----BEGIN [\w\s]+ KEY-----[\s\S]+?-----END [\w\s]+ KEY-----/<ssh-key-REDACTED>/g
+
+# JWT Tokens
+s/eyJ[\w\-]+\.eyJ[\w\-]+\.[\w\-]+/<jwt-token-REDACTED>/g
+
+# Passwords
+s/(password|passwd|pwd)[\s:="']+([^\s"']+)/\1=<password-REDACTED>/gi
 ```
 
-### Step 5: Implementation Examples
-```
-5.1 Using sed (simple patterns):
-    # Sanitize email addresses
-    echo "$content" | sed -E 's/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/<email>/g'
+**Pass 2: Personal Information**
+```bash
+# Email addresses
+s/[\w\.-]+@[\w\.-]+\.\w+/<email>/g
 
-    # Sanitize IP addresses
-    echo "$content" | sed -E 's/\b([0-9]{1,3}\.){3}[0-9]{1,3}\b/<ip-address>/g'
+# IP addresses (preserve common local IPs)
+s/\b(?!127\.0\.0\.1|0\.0\.0\.0|localhost)(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/<ip-address>/g
+s/([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}/<ipv6-address>/g
 
-5.2 Using awk (multi-line patterns):
-    # Sanitize multi-line SSH keys
-    awk '
-    /-----BEGIN .* KEY-----/ { in_key=1; print "<ssh-key-REDACTED>"; next }
-    /-----END .* KEY-----/ { in_key=0; next }
-    !in_key { print }
-    ' file.txt
+# Phone numbers
+s/[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}/<phone>/g
 
-5.3 Using Python (complex logic):
-    python3 -c "
-    import re
-    import sys
-
-    content = sys.stdin.read()
-
-    # Define patterns with named groups for clarity
-    patterns = [
-        # API keys with context
-        (r'(api[_-]?key|token)[\"\'\\s:=]+([A-Za-z0-9\\-_]{20,})', r'\\1=<api-key-REDACTED>'),
-        # Email addresses
-        (r'[\\w\\.-]+@[\\w\\.-]+\\.\\w+', '<email>'),
-        # File paths with usernames
-        (r'/home/[^/]+/', '/home/<username>/'),
-        # UUIDs
-        (r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', '<uuid>')
-    ]
-
-    # Apply all patterns
-    for pattern, replacement in patterns:
-        content = re.sub(pattern, replacement, content, flags=re.IGNORECASE)
-
-    print(content)
-    "
-
-5.4 Using jq (JSON data):
-    # Sanitize JSON while preserving structure
-    jq 'walk(
-        if type == "object" then
-            with_entries(
-                if .key | test("password|secret|token"; "i") then
-                    .value = "<redacted>"
-                else . end
-            )
-        elif type == "string" then
-            gsub("[\\w.-]+@[\\w.-]+\\.[\\w]+"; "<email>") |
-            gsub("Bearer [A-Za-z0-9\\-_.]+"; "Bearer <token-REDACTED>")
-        else . end
-    )' data.json
+# UUIDs
+s/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/<uuid>/g
 ```
 
-### Step 6: Validation
-```
-6.1 Quick scan for missed patterns:
-    - Re-run detection without replacement
-    - Flag any matches found
-    - Manually review if needed
+**Pass 3: System Information**
+```bash
+# User paths
+s|/home/([^/]+)/|/home/<username>/|g
+s|/Users/([^/]+)/|/Users/<username>/|g
+s|C:\\Users\\([^\\]+)\\|C:\\Users\\<username>\\|g
 
-6.2 Check for partial exposures:
-    - Key prefixes (sk_live_xxx → <api-key>)
-    - Encoded credentials (base64, hex)
-    - URLs with embedded auth
+# Database URLs
+s|(mongodb|postgres|mysql|redis)://[^@]+@[^\s]+|\1://<credentials>@<host>|g
 
-6.3 Context preservation check:
-    - Error messages still meaningful?
-    - Stack traces still useful?
-    - Relationships preserved?
-
-6.4 Over-sanitization check:
-    - Public information not redacted
-    - Error types preserved
-    - Line numbers intact
+# Internal hostnames
+s/[a-zA-Z0-9\-]+\.(local|internal|corp)/<hostname>/g
 ```
 
-### Step 7: Final Formatting
-```
-7.1 Add sanitization notice:
-    Prepend to sanitized content:
-    "Note: This output has been sanitized to remove sensitive information.
-     Patterns like <email>, <ip-address>, and <api-key-REDACTED>
-     replace actual values."
+**Pass 4: Context-Specific**
+- Session IDs
+- Temporary paths
+- Port numbers (when sensitive)
+- Custom project patterns
 
-7.2 Preserve debugging value:
-    - Keep error types and codes
-    - Maintain stack trace structure
-    - Preserve timestamp formats
-    - Keep relative relationships
+### 4. Tool-Specific Implementation
 
-7.3 Document what was sanitized:
-    If significant sanitization:
-    "Sanitized: 3 email addresses, 2 API keys, 1 database URL"
+#### Using sed (simple patterns)
+```bash
+echo "${content}" | sed -E \
+  -e 's/[\w\.-]+@[\w\.-]+\.\w+/<email>/g' \
+  -e 's/\b(?!127\.0\.0\.1)([0-9]{1,3}\.){3}[0-9]{1,3}\b/<ip-address>/g' \
+  -e 's/(api[_-]?key)[\s:=]+["'\''`]?[\w\-]{20,}["'\''`]?/\1=<api-key-REDACTED>/gi'
 ```
 
-## Common Sanitization Scenarios
-
-### Error Message Sanitization
-```
-Original:
-Failed to connect to database at postgresql://admin:SuperSecret123@192.168.1.100:5432/production
-User john.smith@company.com does not have permission
-
-Sanitized:
-Failed to connect to database at postgresql://<user>:<password>@<ip-address>:5432/<database>
-User <email> does not have permission
-```
-
-### Stack Trace Sanitization
-```
-Original:
-Traceback (most recent call last):
-  File "/home/johndoe/projects/secret-project/main.py", line 42, in process
-    api_key = "sk_live_abcd1234efgh5678ijkl"
-
-Sanitized:
-Traceback (most recent call last):
-  File "/home/<username>/projects/<project>/main.py", line 42, in process
-    api_key = "<api-key-REDACTED>"
+#### Using awk (medium complexity)
+```bash
+echo "${content}" | awk '
+/-----BEGIN .* KEY-----/ { in_key=1; print "<ssh-key-REDACTED>"; next }
+/-----END .* KEY-----/ { in_key=0; next }
+!in_key {
+    gsub(/\/home\/[^\/]+\//, "/home/<username>/")
+    gsub(/\/Users\/[^\/]+\//, "/Users/<username>/")
+    gsub(/api[_-]?key[\s:=]+["\'`]?[\w\-]{20,}["\'`]?/, "api_key=<api-key-REDACTED>")
+    gsub(/[\w\.-]+@[\w\.-]+\.\w+/, "<email>")
+    print
+}'
 ```
 
-### Configuration File Sanitization
+#### Using python (complex patterns)
+```python
+#!/usr/bin/env python3
+import re
+import sys
+
+content = sys.stdin.read()
+
+# Define sanitization patterns with priority order
+patterns = [
+    # Critical - Credentials
+    (r'(api[_-]?key|apikey|token|bearer)[\s:="\']+([A-Za-z0-9\-_]{20,})', r'\1=<api-key-REDACTED>'),
+    (r'(password|passwd|pwd)[\s:="\']+([^\s"\']+)', r'\1=<password-REDACTED>'),
+    (r'-----BEGIN ([A-Z ]+) KEY-----[\s\S]+?-----END \1 KEY-----', '<ssh-key-REDACTED>'),
+    (r'eyJ[\w\-]+\.eyJ[\w\-]+\.[\w\-]+', '<jwt-token-REDACTED>'),
+    
+    # Personal info
+    (r'[\w\.-]+@[\w\.-]+\.\w+', '<email>'),
+    (r'\b(?!127\.0\.0\.1|0\.0\.0\.0|localhost)(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b', '<ip-address>'),
+    (r'[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}', '<phone>'),
+    
+    # System paths
+    (r'/home/([^/]+)/', '/home/<username>/'),
+    (r'/Users/([^/]+)/', '/Users/<username>/'),
+    (r'C:\\Users\\([^\\]+)\\', 'C:\\Users\\<username>\\'),
+    
+    # Identifiers
+    (r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', '<uuid>'),
+    (r'(session[_-]?id|sid)[\s:="\']+([A-Za-z0-9]{16,})', r'\1=<session-id>'),
+    
+    # Database URLs
+    (r'(mongodb|postgres|mysql|redis)://[^:]+:[^@]+@[^\s]+', r'\1://<credentials>@<host>'),
+]
+
+# Apply all patterns
+for pattern, replacement in patterns:
+    content = re.sub(pattern, replacement, content, flags=re.IGNORECASE | re.MULTILINE)
+
+# Add sanitization notice
+print("# Note: This content has been sanitized for security")
+print(f"# Patterns applied: {len(patterns)}")
+print("# Date: $(date)")
+print()
+print(content)
 ```
-Original:
-{
-  "database_url": "postgres://dbuser:mypassword@db.internal.company.com/app",
-  "api_key": "ak_prod_1234567890abcdef",
-  "admin_email": "admin@company.com"
-}
 
-Sanitized:
-{
-  "database_url": "postgres://<user>:<password>@<hostname>/<database>",
-  "api_key": "<api-key-REDACTED>",
-  "admin_email": "<email>"
-}
+#### Using jq (JSON data)
+```bash
+cat file.json | jq '
+walk(
+  if type == "object" then
+    with_entries(
+      if .key | test("password|secret|token|key"; "i") then
+        .value = "<redacted>"
+      else . end
+    )
+  elif type == "string" then
+    gsub("(?<prefix>api[_-]?key[\"\'\\s:=]+)[^\"\'\\s]+"; "\(.prefix)<api-key-REDACTED>") |
+    gsub("[\\w\\.-]+@[\\w\\.-]+\\.\\w+"; "<email>") |
+    gsub("\\b(?!127\\.0\\.0\\.1)([0-9]{1,3}\\.){3}[0-9]{1,3}\\b"; "<ip-address>")
+  else . end
+)'
 ```
 
-## Tool Fallback Chain
+### 5. Validate Sanitization
 
-When primary tools unavailable:
+After sanitization:
+1. **Quick scan for missed patterns**
+   - Re-run pattern detection without replacement
+   - Flag any sensitive patterns still found
+   
+2. **Check for partial exposures**
+   - Key prefixes/suffixes (e.g., `sk_live_...` should be fully redacted)
+   - Encoded data (base64, hex)
+   - URLs with embedded credentials
+   
+3. **Context preservation**
+   - Error messages still meaningful?
+   - Stack traces still debuggable?
+   - Relationships between data preserved?
 
-1. **No sed?** → Use awk or perl
-2. **No jq?** → Use python -m json.tool + sed
-3. **No specialized tools?** → Fall back to Python
-4. **No scripting?** → Provide manual instructions
+4. **Apply conservative fallback if unsure**
+   ```bash
+   # Any long alphanumeric string could be sensitive
+   s/[A-Za-z0-9\-_]{40,}/<possible-sensitive-data-REDACTED>/g
+   ```
+
+### 6. Handle Tool Failures
+
+If primary tool fails:
+1. **Log failure reason**
+   ```bash
+   echo "Warning: ${tool} not available, trying ${next_tool}" >&2
+   ```
+
+2. **Try fallback chain**
+   - sed → awk → perl → python
+   - jq → python -m json.tool
+
+3. **Manual fallback**
+   ```bash
+   echo "MANUAL SANITIZATION REQUIRED"
+   echo "Please remove:"
+   echo "- Email addresses"
+   echo "- API keys and passwords"
+   echo "- IP addresses"
+   echo "- Usernames in paths"
+   ```
+
+### 7. Document Sanitization
+
+Add metadata to sanitized content:
+```
+# Note: This content has been sanitized for security
+# Tool used: ${tool_name}
+# Patterns applied: ${pattern_count}
+# Date: ${timestamp}
+# 
+# Sanitized items:
+# - ${count} email addresses → <email>
+# - ${count} API keys → <api-key-REDACTED>
+# - ${count} IP addresses → <ip-address>
+```
+
+## Output
+Sanitized text safe for public posting
 
 ## Integration Points
+- Used by: Process: IssueUpdate
+- Used by: Process: CommitWork  
+- Used by: Process: SubmitWork (PRs)
+- Uses: Process: ToolSelection
+- References: core/defaults.md for patterns
 
-- **Called by**: All processes before external posting
-- **Especially critical for**: IssueUpdate, CommitWork, SubmitWork
-- **Configuration from**: sanitization_patterns in manifest
-- **Reports to**: Security audit logs
+## Common Use Cases
+
+### Issue Creation
+```bash
+# Capture error with full context
+error_output=$(./failing_command 2>&1)
+
+# Sanitize before posting
+sanitized=$(echo "$error_output" | python3 /path/to/sanitize.py)
+
+# Create issue with clean content
+gh issue create --title "Deployment error" --body "$sanitized"
+```
+
+### Debug Log Sharing
+```bash
+# Sanitize docker logs
+docker logs container_name 2>&1 | \
+  awk -f /path/to/sanitize.awk > \
+  debug_logs_sanitized.txt
+```
+
+### CI/CD Output
+```bash
+# Clean build logs before artifact upload
+cat build.log | \
+  sed -f /path/to/sanitize.sed > \
+  build_clean.log
+```
+
+## Testing Sanitization
+
+Create test file with known patterns:
+```bash
+cat > test_sensitive.txt << 'EOF'
+API_KEY=sk_test_abcd1234efgh5678ijkl9012mnop
+Email: user@example.com
+Database: postgres://dbuser:SuperSecret123@db.internal:5432/prod
+Path: /home/johndoe/projects/secret-project
+IP: 192.168.1.100
+Session: session_id=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
+EOF
+
+# Test sanitization
+./sanitize.sh < test_sensitive.txt
+
+# Expected output:
+# API_KEY=<api-key-REDACTED>
+# Email: <email>
+# Database: postgres://<credentials>@<host>
+# Path: /home/<username>/projects/secret-project
+# IP: <ip-address>
+# Session: session_id=<session-id>
+```
 
 ## Best Practices
 
-### Do's
-- ✅ Sanitize before posting, not after
-- ✅ Err on the side of over-sanitization
-- ✅ Preserve error context while removing details
-- ✅ Test sanitization patterns regularly
-- ✅ Keep local unsanitized copies for debugging
+### DO
+- ✅ Sanitize BEFORE posting, not after
+- ✅ Keep original for local debugging
+- ✅ Test patterns regularly
+- ✅ Err on side of over-sanitization
+- ✅ Preserve error context
 
-### Don'ts
-- ❌ Post first, sanitize later
+### DON'T
 - ❌ Trust automatic sanitization blindly
-- ❌ Remove so much context errors become useless
-- ❌ Forget about encoded sensitive data
-- ❌ Sanitize local-only debugging sessions
+- ❌ Post first, sanitize later
+- ❌ Remove so much that errors are useless
+- ❌ Forget about encoded/hashed secrets
+- ❌ Skip review of sanitized output
 
-## Security Considerations
+## Troubleshooting
 
-Remember that sanitization is part of defense in depth. Even with sanitization:
-- Never commit actual credentials to repositories
-- Use environment variables for secrets
-- Rotate any accidentally exposed credentials
-- Review sanitized output before posting
-- Consider the audience and adjust accordingly
+### Pattern Not Matching
+- Check regex escaping for your tool
+- Test pattern in isolation
+- Verify tool regex syntax support
+- Consider case sensitivity
 
-The goal is to share useful information for debugging and collaboration while preventing any security or privacy breaches. When in doubt, redact it out!
+### Over-Sanitization
+- Refine patterns to be more specific
+- Add negative lookbehind/ahead
+- Whitelist known safe patterns
+- Use word boundaries
+
+### Performance Issues
+- Use streaming for large files
+- Pre-compile regex patterns
+- Process in chunks
+- Use most efficient tool for data size
+
+---
+*Security through sanitization is critical. When in doubt, redact it out!*

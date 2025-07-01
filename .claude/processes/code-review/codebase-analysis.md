@@ -1,16 +1,18 @@
 ---
-module: CodebaseReview
+name: Codebase Review Process
+module_type: process
 scope: context
-triggers: ["review codebase", "analyze code", "before planning", "understand project"]
-conflicts: []
-dependencies: ["issue-tracking"]
 priority: high
+triggers: ["review codebase", "analyze code", "before planning", "understand project", "explore codebase"]
+dependencies: ["processes/issue-tracking/issue-management.md"]
+conflicts: []
+version: 1.0.0
 ---
 
 # Codebase Review Process
 
 ## Purpose
-Systematically analyze a codebase before planning any implementation to understand structure, patterns, dependencies, and risks.
+Systematically analyze a codebase before planning any implementation to understand structure, patterns, dependencies, and risks. This ensures informed decisions and pattern-consistent implementations.
 
 ## Trigger
 Execute BEFORE planning any:
@@ -24,9 +26,9 @@ Execute BEFORE planning any:
 - Understanding of the requested change
 - List of potentially affected areas
 
-## Steps
+## Process Steps
 
-### Step 1: Initial Context Gathering
+### 1. Initial Context Gathering
 ```
 1.1 Identify the scope of the requested change
 1.2 List keywords related to the change:
@@ -38,233 +40,157 @@ Execute BEFORE planning any:
 1.4 Create initial hypothesis about implementation areas
 ```
 
-### Step 2: Project Structure Analysis
-```
-2.1 Review project directory structure:
-    ${version_control} ls-tree -r HEAD --name-only | head -50
+### 2. Project Structure Analysis
+```bash
+# Review directory structure
+${version_control} ls-tree -r HEAD --name-only | head -50
 
-2.2 Identify key directories:
-    - Source code locations (src/, lib/, app/)
-    - Test directories (test/, spec/, __tests__/)
-    - Configuration files (config/, .*)
-    - Documentation (docs/, README*)
+# Identify key directories
+find . -type d -name "src" -o -name "lib" -o -name "test" | head -20
 
-2.3 Note the technology stack:
-    - Programming languages (by file extensions)
-    - Frameworks (from config files)
-    - Build tools (package.json, pom.xml, etc.)
-
-2.4 Check for build/deployment configurations:
-    - CI/CD files (.github/workflows/, .gitlab-ci.yml)
-    - Dockerfiles or container configs
-    - Deployment scripts
+# Check technology stack
+ls -la | grep -E "(package.json|requirements.txt|go.mod|Gemfile|pom.xml)"
 ```
 
-### Step 3: Architecture Discovery
-```
-3.1 Identify architectural patterns:
-    - MVC (controllers/, models/, views/)
-    - Clean Architecture (domain/, infrastructure/)
-    - Microservices (separate service directories)
-    - Monolith (single application structure)
+Key areas to identify:
+- Source code locations (src/, lib/, app/)
+- Test directories (test/, spec/, __tests__/)
+- Configuration files (config/, .*)
+- Documentation (docs/, README*)
+- CI/CD configurations
 
-3.2 Map component relationships:
-    - Entry points (main.*, index.*, app.*)
-    - Core business logic locations
-    - Data flow patterns
-    - API boundaries
+### 3. Architecture Discovery
 
-3.3 Document service boundaries:
-    - Internal APIs
-    - External integrations
-    - Database interactions
-    - Message queues or event systems
-```
+#### Identify Patterns
+- **MVC**: controllers/, models/, views/
+- **Clean Architecture**: domain/, infrastructure/, application/
+- **Microservices**: Separate service directories
+- **Layered**: presentation/, business/, data/
 
-### Step 4: Code Pattern Analysis
-```
-4.1 Identify coding conventions:
-    - Naming patterns:
-        * camelCase vs snake_case
-        * File naming conventions
-        * Class/function prefixes
-    - File organization:
-        * One class per file?
-        * Grouped by feature or type?
-        * Test file locations
+#### Map Components
+```bash
+# Find entry points
+find . -name "main.*" -o -name "index.*" -o -name "app.*"
 
-4.2 Recognize common patterns:
-    - Error handling:
-        * Try-catch patterns
-        * Error types used
-        * Logging approaches
-    - State management:
-        * Global state locations
-        * State update patterns
-        * Immutability practices
-    - Authentication/Authorization:
-        * Middleware locations
-        * Permission checking patterns
-        * Session management
+# Locate core business logic
+grep -r "class.*Service" --include="*.js" --include="*.py" --include="*.java"
 
-4.3 Note custom utilities:
-    - Helper functions
-    - Common abstractions
-    - Shared components
+# Identify API boundaries
+find . -type f -name "*controller*" -o -name "*handler*" -o -name "*route*"
 ```
 
-### Step 5: Dependency Analysis
-```
-5.1 Review dependency files:
-    - package.json (Node.js)
-    - requirements.txt/Pipfile (Python)
-    - pom.xml/build.gradle (Java)
-    - go.mod (Go)
-    - Gemfile (Ruby)
+### 4. Code Pattern Analysis
 
-5.2 Categorize dependencies:
-    - Core framework dependencies
-    - Utility libraries
-    - Development dependencies
-    - Security-related packages
-
-5.3 Check for outdated packages:
-    - Note deprecated warnings
-    - Identify unmaintained packages
-    - Check for security advisories
-
-5.4 Note internal dependencies:
-    - Custom packages
-    - Internal libraries
-    - Shared modules
+#### Naming Conventions
+```bash
+# Check casing patterns
+grep -r "function \w\+" --include="*.js" | head -10
+grep -r "class \w\+" --include="*.py" | head -10
 ```
 
-### Step 6: Test Infrastructure Review
-```
-6.1 Locate test files:
-    - Unit test locations
-    - Integration test directories
-    - E2E test suites
+#### Common Patterns to Identify
+1. **Error Handling**
+   - Try-catch patterns
+   - Error types used
+   - Logging approaches
 
-6.2 Identify testing approach:
-    - Testing frameworks used
-    - Mocking strategies
-    - Test data management
-    - Coverage tools
+2. **State Management**
+   - Global state locations
+   - State update patterns
+   - Immutability practices
 
-6.3 Assess test quality:
-    - Test naming conventions
-    - Assertion patterns
-    - Setup/teardown approaches
+3. **Authentication/Authorization**
+   - Middleware locations
+   - Permission checking
+   - Session management
 
-6.4 Note testing gaps:
-    - Untested components
-    - Missing test types
-    - Low coverage areas
-```
+### 5. Dependency Analysis
+```bash
+# Check package files
+cat package.json | jq '.dependencies'
+cat requirements.txt
+cat go.mod | grep -v indirect
 
-### Step 7: Related Feature Analysis
-```
-7.1 Find similar implementations:
-    - Search for similar feature keywords
-    - Review related components
-    - Study existing patterns
-
-7.2 Analyze implementation approach:
-    - Code structure used
-    - Design patterns applied
-    - Integration methods
-
-7.3 Identify reusable components:
-    - Shared utilities
-    - Common interfaces
-    - Base classes
-
-7.4 Check for documented decisions:
-    - ADRs (Architecture Decision Records)
-    - Code comments explaining "why"
-    - README notes about choices
+# Look for security issues
+npm audit --production
+pip check
 ```
 
-### Step 8: Risk Assessment
-```
-8.1 Identify high-risk areas:
-    - Core business logic:
-        * Payment processing
-        * User authentication
-        * Data validation
-    - Security-sensitive code:
-        * Encryption/decryption
-        * Access control
-        * Input sanitization
-    - Performance-critical paths:
-        * Database queries
-        * API endpoints
-        * Algorithm implementations
+Categorize:
+- Core framework dependencies
+- Utility libraries
+- Development dependencies
+- Security-related packages
 
-8.2 Note technical debt:
-    - TODO/FIXME comments
-    - Deprecated code usage
-    - Temporary workarounds
+### 6. Test Infrastructure Review
 
-8.3 Flag legacy code:
-    - Old patterns
-    - Outdated dependencies
-    - Unmaintained sections
+#### Locate Tests
+```bash
+# Find test files
+find . -name "*test*" -o -name "*spec*" | grep -E "\.(js|py|go|java)$"
 
-8.4 Assess change impact:
-    - Tightly coupled components
-    - Wide-reaching interfaces
-    - Breaking change potential
+# Check test framework
+grep -E "(jest|mocha|pytest|junit|testing)" package.json requirements.txt go.mod
 ```
 
-### Step 9: Documentation Review
-```
-9.1 README analysis:
-    - Setup instructions
-    - Architecture overview
-    - Contribution guidelines
+#### Assess Quality
+- Test naming conventions
+- Coverage reports location
+- Mock/stub strategies
+- Test data management
 
-9.2 Inline documentation:
-    - Comment quality
-    - API documentation
-    - Complex logic explanation
+### 7. Related Feature Analysis
 
-9.3 External documentation:
-    - Wiki pages
-    - Architecture diagrams
-    - API specifications
+Search for similar implementations:
+```bash
+# Search by feature keywords
+grep -r "${feature_keyword}" --include="*.${extension}" | head -20
 
-9.4 Development guides:
-    - Onboarding documents
-    - Style guides
-    - Best practices
+# Find similar patterns
+grep -r "${pattern}" --include="*.${extension}" -B 2 -A 2
 ```
 
-### Step 10: Create Review Summary
+Document:
+- Code structure used
+- Design patterns applied
+- Reusable components
+- Integration methods
+
+### 8. Risk Assessment
+
+#### High-Risk Areas
+- **Security**: Auth, encryption, input validation
+- **Business Critical**: Payments, core algorithms
+- **Performance**: Database queries, API endpoints
+- **Data Integrity**: Validation, transactions
+
+#### Technical Debt Indicators
+```bash
+# Find TODOs and FIXMEs
+grep -r "TODO\|FIXME\|HACK\|XXX" --include="*.${extension}"
+
+# Check for deprecated usage
+grep -r "@deprecated\|DEPRECATED" --include="*.${extension}"
 ```
-10.1 Compile findings:
-    - Key insights
-    - Important patterns
-    - Critical risks
-    - Reusable components
 
-10.2 Structure summary:
-    - Use standard template
-    - Highlight action items
-    - Note questions
-    - Suggest approach
+### 9. Documentation Review
 
-10.3 Prepare for planning:
-    - Link findings to task
-    - Identify constraints
-    - Suggest solutions
-    - Estimate complexity
+Check for:
+```bash
+# README files
+find . -name "README*" -type f
+
+# API documentation
+find . -name "*.md" -path "*/docs/*" -o -path "*/documentation/*"
+
+# Inline documentation
+grep -r "\/\*\*\|'''\|\"\"\"" --include="*.${extension}" | wc -l
 ```
 
-## Output
+### 10. Create Review Summary
 
-### Review Summary Structure:
+## Review Summary Template
+
 ```markdown
 ### Codebase Review Summary
 
@@ -314,60 +240,86 @@ Execute BEFORE planning any:
 
 ## Conditional Execution
 
-### For Feature Implementation:
-```
-FOCUS ON:
-- Step 3: Architecture Discovery (DETAILED)
-- Step 4: Code Pattern Analysis (DETAILED)
-- Step 7: Related Feature Analysis (CRITICAL)
-LIGHTER ON:
-- Step 5: Dependency Analysis (QUICK CHECK)
-```
+### For Feature Implementation
+**FOCUS ON**:
+- Architecture Discovery (DETAILED)
+- Code Pattern Analysis (DETAILED)
+- Related Feature Analysis (CRITICAL)
 
-### For Bug Fix:
-```
-FOCUS ON:
-- Step 7: Related Feature Analysis (CRITICAL)
-- Step 8: Risk Assessment (DETAILED)
-- Step 6: Test Infrastructure (DETAILED)
-LIGHTER ON:
-- Step 3: Architecture Discovery (BASIC)
-```
+**LIGHTER ON**:
+- Dependency Analysis (QUICK CHECK)
 
-### For Refactoring:
-```
-FOCUS ON:
-- Step 4: Code Pattern Analysis (CRITICAL)
-- Step 6: Test Infrastructure (CRITICAL)
-- Step 8: Risk Assessment (DETAILED)
-- Step 5: Dependency Analysis (DETAILED)
-```
+### For Bug Fix
+**FOCUS ON**:
+- Related Feature Analysis (CRITICAL)
+- Risk Assessment (DETAILED)
+- Test Infrastructure (DETAILED)
+
+**LIGHTER ON**:
+- Architecture Discovery (BASIC)
+
+### For Refactoring
+**FOCUS ON**:
+- Code Pattern Analysis (CRITICAL)
+- Test Infrastructure (CRITICAL)
+- Risk Assessment (DETAILED)
+- Dependency Analysis (DETAILED)
 
 ## Integration Points
+- Feeds into: Process: FeaturePlanning
+- Feeds into: Process: TaskBreakdown
+- May trigger: Process: RiskMitigation
+- Updates: Issue tracker with findings
 
-- **Feeds into**: Process: ImplementationPlanning
-- **Feeds into**: Process: TaskBreakdown
-- **Triggers**: Process: RiskMitigation (if high risks found)
-- **Updates**: Issue tracker with review findings
-
-## Time Estimates
-
-- Minimal Review (tiny fixes): 2-3 minutes
-- Standard Review (default): 5-10 minutes
-- Deep Review (major changes): 15-20 minutes
+## Time Guidelines
+- **Minimal Review** (tiny fixes): 2-3 minutes
+- **Standard Review** (typical changes): 5-10 minutes
+- **Deep Review** (major changes): 15-20 minutes
 
 ## Best Practices
 
-### Do's
+### DO
 - ✅ Always review before planning
 - ✅ Use findings to inform approach
 - ✅ Document questions immediately
-- ✅ Share summary with team
-- ✅ Update review if scope changes
+- ✅ Focus review based on task type
+- ✅ Update if scope changes
 
-### Don'ts
+### DON'T
 - ❌ Skip review for "simple" changes
 - ❌ Make assumptions about patterns
 - ❌ Ignore test infrastructure
-- ❌ Overlook documentation
 - ❌ Review without clear scope
+- ❌ Spend too long on exhaustive analysis
+
+## Common Commands Reference
+
+### Language-Specific Searches
+```bash
+# JavaScript/TypeScript
+find . -name "*.js" -o -name "*.ts" | xargs grep -l "className"
+
+# Python
+find . -name "*.py" | xargs grep -l "class.*:"
+
+# Go
+find . -name "*.go" | xargs grep -l "type.*struct"
+
+# Java
+find . -name "*.java" | xargs grep -l "public class"
+```
+
+### Quick Analysis Commands
+```bash
+# Count lines of code by language
+find . -name "*.${ext}" -exec wc -l {} + | tail -1
+
+# Find largest files
+find . -name "*.${ext}" -exec wc -l {} + | sort -rn | head -10
+
+# Recent changes in area
+${version_control} log --oneline -n 20 -- path/to/area
+```
+
+---
+*A thorough codebase review prevents surprises and ensures pattern-consistent implementation.*
