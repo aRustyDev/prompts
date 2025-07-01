@@ -1,286 +1,320 @@
 ---
-module: FeatureDevelopmentWorkflow
+name: Feature Development Workflow
+module_type: workflow
 scope: context
-triggers: ["new feature", "implement feature", "feature development", "add functionality"]
-conflicts: []
-dependencies: ["CodebaseReview", "TestDrivenDevelopment", "CommitStandards", "IssueTracking"]
 priority: high
+triggers: ["new feature", "implement", "add functionality", "create component", "feature request"]
+dependencies: 
+  - "processes/version-control/workspace-setup.md"
+  - "processes/code-review/codebase-analysis.md"
+  - "processes/issue-tracking/feature-planning.md"
+  - "patterns/development/tdd-pattern.md"
+  - "processes/testing/tdd.md"
+  - "processes/code-review/quality-review.md"
+  - "processes/version-control/workspace-cleanup.md"
+  - "processes/version-control/submit-work.md"
+conflicts: []
+version: 1.0.0
 ---
 
 # Feature Development Workflow
 
 ## Purpose
-Orchestrate the complete process of implementing a new feature from initial request through deployment-ready code, ensuring quality, documentation, and team coordination.
+Orchestrate the complete process of implementing a new feature from initial request through deployment-ready code. This workflow ensures consistent, high-quality feature development following established patterns.
 
-## Workflow Trigger
-- Product owner requests new functionality
-- User story created for feature
-- Feature identified during planning
-- Enhancement issue opened
+## Trigger
+- New feature request from user
+- Feature ticket assigned
+- Enhancement to existing functionality
+- User story created
+
+## Pattern
+Uses `${active_pattern}` from configuration (default: TestDrivenDevelopment)
 
 ## Workflow Steps
 
-### Phase 1: Setup and Analysis
+### 1. Process: WorkspaceSetup
+**Purpose**: Initialize clean, tracked workspace
+
+**Actions**:
+- Verify repository context
+- Create feature branch: `feature/${issue_number}-${brief_description}`
+- Check pre-commit configuration
+- Initialize issue tracking
+- Push branch to remote
+
+**Output**: Clean workspace on dedicated branch
+
+### 2. Process: CodebaseReview (Feature Focus)
+**Purpose**: Understand existing code and patterns
+
+**Focus Areas**:
+- Architecture patterns (DETAILED)
+- Code conventions (DETAILED)
+- Similar features (CRITICAL)
+- Integration points
+
+**Output**: Review summary with implementation insights
+
+### 3. Process: FeaturePlanning
+**Purpose**: Create detailed implementation plan
+
+**Actions**:
+- State understanding of requirements
+- Identify ambiguities and ask questions
+- Design technical approach
+- Break down into atomic tasks
+- Define test scenarios
+- Assess risks and dependencies
+
+**Decision Point**:
 ```
-1.1 Execute: Process: WorkspaceSetup
-    - Creates feature branch
-    - Initializes issue tracking
-    - Configures pre-commit hooks
-
-1.2 Execute: Process: CodebaseReview
-    Focus: Feature Implementation
-    - Understand existing architecture
-    - Identify integration points
-    - Find reusable components
-
-1.3 Checkpoint: Review Understanding
-    - Confirm codebase analysis complete
-    - Questions documented
-    - Approach forming
-```
-
-### Phase 2: Planning
-```
-2.1 Execute: Process: FeaturePlanning
-    Inputs:
-    - Requirements from issue/story
-    - Codebase review findings
-    - Technical constraints
-
-2.2 Decision Point: Project Tracking
-    IF feature_complexity == "high":
-        Create GitHub Project
-    ELIF subtasks > 5:
-        Create Milestone
-    ELSE:
-        Use single issue tracking
-
-2.3 Checkpoint: Plan Approval
-    - Present plan to stakeholder
-    - Get confirmation on approach
-    - Adjust based on feedback
-```
-
-### Phase 3: Implementation
-```
-3.1 Load Development Pattern:
-    Default: Process: TestDrivenDevelopment
-    Alternative: Based on ${active_pattern}
-
-3.2 Implementation Loop:
-    WHILE tasks_remaining:
-        - Select next atomic task
-        - Execute active development pattern
-        - Commit and push changes
-        - Update issue tracking
-
-3.3 Progress Monitoring:
-    - CI/CD status after each push
-    - Test coverage tracking
-    - Performance benchmarks
+Should this be tracked as a Project or Milestone?
+├─ Multi-week effort → Create GitHub Project
+├─ Multiple subtasks → Create Milestone
+└─ Single issue scope → Track in issue only
 ```
 
-### Phase 4: Quality Assurance
+**Output**: Approved implementation plan with task breakdown
+
+### 4. Process: DevelopmentExecution → ${active_pattern}
+**Purpose**: Implement feature using chosen pattern
+
+**Default**: TestDrivenDevelopment
+- Red-green-refactor cycles
+- Atomic commits after each cycle
+- Continuous pushing to remote
+- Issue updates after each cycle
+
+**Alternative Patterns** (if overridden):
+- CoverageDrivenDevelopment
+- BehaviorDrivenDevelopment
+
+**Implementation Loop**:
 ```
-4.1 Execute: Process: CodeQualityReview
-    - Automated checks pass
-    - Manual review complete
-    - Security considerations addressed
-
-4.2 Integration Testing:
-    - Feature works with existing code
-    - No regressions introduced
-    - Edge cases handled
-
-4.3 Documentation Update:
-    - API docs if applicable
-    - README updates
-    - User-facing documentation
+WHILE tasks_remaining:
+    - Select next atomic task
+    - Execute development pattern
+    - Commit and push changes
+    - Update issue tracking
+    - Monitor CI/CD status
 ```
 
-### Phase 5: Finalization
-```
-5.1 Execute: Process: WorkspaceCleanup
-    - All changes committed
-    - Final issue updates
-    - Metrics recorded
+### 5. Process: CodeQualityReview
+**Purpose**: Ensure code meets standards
 
-5.2 Execute: Process: SubmitWork
-    - Create pull request
-    - Link to issue/project
-    - Request reviews
+**Checks**:
+- Automated (linting, formatting, types)
+- Pattern compliance
+- Security review
+- Performance assessment
+- Documentation completeness
 
-5.3 Monitor Review Process:
-    - Respond to feedback
-    - Make requested changes
-    - Ensure CI/CD passing
-```
+**Output**: Quality checklist and improvements
+
+### 6. Process: WorkspaceCleanup
+**Purpose**: Prepare for merge
+
+**Actions**:
+- Ensure all work committed and pushed
+- Update documentation if needed
+- Final issue update with summary
+- Self-review all changes
+
+**Output**: Clean, documented branch ready for review
+
+### 7. Process: SubmitWork
+**Purpose**: Create pull request for review
+
+**Actions**:
+- Create PR with template
+- Link to issue(s)
+- Add reviewers
+- Monitor CI/CD
+- Respond to feedback
+
+**Output**: Pull request ready for team review
 
 ## Decision Points
 
-### Development Pattern Selection
+### 1. Complexity Assessment (Step 3)
 ```
-IF requirements.exploration_needed:
-    Consider: "This feature requires exploration.
-             Load CoverageDrivenDevelopment for spike work?"
-
-ELIF requirements.behavior_focused:
-    Consider: "This feature has complex behaviors.
-             Load BehaviorDrivenDevelopment instead?"
-
-ELSE:
-    Continue with TestDrivenDevelopment
+Feature Complexity Assessment:
+├─ Effort > 1 week → Create GitHub Project
+├─ Subtasks > 10 → Create Milestone
+├─ Subtasks 5-10 → Consider Milestone
+└─ Subtasks < 5 → Use issue tracking only
 ```
 
-### Complexity Assessment
+### 2. Pattern Override (Step 4)
 ```
-AFTER FeaturePlanning:
-    IF estimated_effort > 1_week:
-        Recommend: Create GitHub Project
-        Reason: "Multi-week features benefit from project boards"
-
-    ELIF subtasks > 10:
-        Recommend: Create Milestone
-        Reason: "Many subtasks need grouping for tracking"
+Development Pattern Selection:
+├─ Exploration needed → Consider CDD
+├─ Behavior specs exist → Consider BDD
+├─ Complex behaviors → Consider BDD
+└─ Default → Continue with TDD
 ```
 
-### Risk Mitigation
+### 3. Risk Mitigation (Step 3)
 ```
-IF CodebaseReview.risks == "high":
-    Insert: Process: RiskMitigationPlanning
-    Before: Implementation phase
-    Reason: "High-risk changes need mitigation strategy"
+Risk Assessment:
+├─ High security risk → Add security review
+├─ Performance critical → Add benchmarks
+├─ Breaking changes → Add migration plan
+└─ Low risk → Standard process
 ```
 
-## Completion Criteria
+## Integration Points
 
-The workflow is complete when:
-- All planned functionality implemented
-- All tests passing (unit, integration, e2e)
-- Code review approved
-- Documentation updated
-- Pull request merged
-- Issue closed with summary
+### Required Processes
+1. WorkspaceSetup (initialization)
+2. CodebaseReview (analysis)
+3. FeaturePlanning (planning)
+4. DevelopmentExecution (implementation)
+5. CodeQualityReview (quality)
+6. WorkspaceCleanup (finalization)
+7. SubmitWork (submission)
+
+### Optional Processes
+- RiskMitigation (if high risks)
+- PerformanceOptimization (if needed)
+- SecurityAudit (if sensitive)
+- SpikeResearch (if unknowns)
+
+### May Trigger
+- Workflow: BugFix (if bugs found)
+- Workflow: Refactoring (if debt identified)
+- Process: ArchitectureReview (if structural changes)
+
+## Success Criteria
+- [ ] All requirements implemented
+- [ ] Comprehensive test coverage
+- [ ] No regression in existing features
+- [ ] Documentation updated
+- [ ] Code review approved
+- [ ] CI/CD passing
+- [ ] Stakeholder acceptance
+
+## Time Estimates
+- **Small Feature** (1-2 days): Standard workflow
+- **Medium Feature** (3-5 days): Workflow + milestone
+- **Large Feature** (1-2 weeks): Workflow + project
+- **Epic Feature** (2+ weeks): Phased approach
 
 ## Workflow Variations
 
 ### Spike/Prototype Variation
 For exploratory features:
-1. Skip detailed planning
-2. Use CoverageDrivenDevelopment
-3. Focus on learning objectives
+1. Abbreviated planning
+2. Use CDD for learning
+3. Focus on key unknowns
 4. Document findings
-5. Discard or refactor code
+5. Plan real implementation
 
 ### Emergency Feature Variation
 For urgent features:
-1. Abbreviated CodebaseReview
-2. Minimal planning documentation
-3. Focus on critical path
-4. Extensive post-implementation review
-5. Technical debt logged
+1. Minimal codebase review
+2. Focus on critical path
+3. Accept technical debt
+4. Extensive post-review
+5. Schedule follow-up
 
 ### Large Feature Variation
 For multi-week features:
 1. Extended planning phase
 2. Create GitHub Project
-3. Daily progress updates
-4. Weekly stakeholder sync
-5. Phased implementation
-
-## Integration Points
-
-### Required Processes
-- Process: WorkspaceSetup (start)
-- Process: CodebaseReview (analysis)
-- Process: FeaturePlanning (planning)
-- Process: [DevelopmentPattern] (implementation)
-- Process: SubmitWork (completion)
-
-### Optional Processes
-- Process: RiskMitigation (if high risk)
-- Process: PerformanceOptimization (if needed)
-- Process: SecurityAudit (if sensitive)
-
-### Triggered Workflows
-- May trigger: Workflow: BugFix (if issues found)
-- May trigger: Workflow: Refactoring (if debt identified)
-
-## Metrics and Tracking
-
-### Success Metrics
-- Feature delivered on schedule
-- Test coverage maintained/improved
-- No production incidents
-- Stakeholder satisfaction
-- Code quality metrics
-
-### Progress Tracking
-- Daily updates in issue
-- Commit frequency
-- PR review turnaround
-- CI/CD success rate
-
-### Learning Capture
-- Challenges documented
-- Solutions recorded
-- Patterns identified
-- Process improvements suggested
+3. Weekly stakeholder syncs
+4. Phased implementation
+5. Incremental releases
 
 ## Common Pitfalls
 
-### Planning Paralysis
-⚠️ Spending too long in planning phase
-✅ Timebox planning to 1-2 hours for most features
+### Planning Phase
+- ❌ Analysis paralysis
+- ❌ Skipping codebase review
+- ❌ Vague task breakdown
+- ✅ Timebox planning (2-4 hours max)
 
-### Scope Creep
-⚠️ Adding "just one more thing" during implementation
-✅ Defer additions to separate issues
+### Development Phase
+- ❌ Feature creep
+- ❌ Skipping tests
+- ❌ Large commits
+- ✅ Stay focused on plan
 
-### Incomplete Testing
-⚠️ Skipping tests to meet deadline
-✅ Tests are part of the feature, not optional
+### Submission Phase
+- ❌ Rushed PR description
+- ❌ Missing issue links
+- ❌ Ignored CI failures
+- ✅ Thorough self-review
 
-### Documentation Lag
-⚠️ Leaving docs for "later"
-✅ Update docs with each commit
+## Best Practices
+
+### Communication
+- ✅ Daily progress updates
+- ✅ Ask questions early
+- ✅ Document decisions
+- ✅ Share blockers immediately
+
+### Technical Excellence
+- ✅ Follow existing patterns
+- ✅ Write tests first
+- ✅ Keep changes focused
+- ✅ Refactor continuously
+
+### Process Discipline
+- ✅ Update issues regularly
+- ✅ Commit atomically
+- ✅ Push frequently
+- ✅ Review own work
+
+## Example Execution
+
+```
+User: "Add export functionality for user data"
+
+1. WorkspaceSetup
+   ✓ Branch: feature/456-user-export
+   ✓ Issue #456 created
+
+2. CodebaseReview
+   ✓ Found existing CSV export in reports module
+   ✓ Identified user data access patterns
+   ✓ Located similar batch operations
+
+3. FeaturePlanning
+   ✓ 8 tasks identified → Creating milestone
+   ✓ Reusing CSV service
+   ✓ Adding progress tracking
+   ✓ Plan approved
+
+4. Development (TDD)
+   ✓ Task 1: User data collector service
+   ✓ Task 2: Export format handlers
+   → Task 3: Progress tracking (current)
+   ⏳ Tasks 4-8: Pending
+
+5. Progress: 25% complete, all tests passing
+```
 
 ## Troubleshooting
 
 ### Blocked on Requirements
 1. Document specific questions
-2. Schedule stakeholder sync
-3. Make reasonable assumptions
-4. Document assumptions clearly
+2. Create spike task if needed
+3. Make documented assumptions
+4. Get stakeholder clarification
 
-### Technical Roadblock
-1. Research similar implementations
+### Technical Challenges
+1. Research similar solutions
 2. Consult team/documentation
-3. Consider alternative approaches
+3. Consider alternatives
 4. Document decision rationale
 
 ### Time Pressure
-1. Identify MVP functionality
-2. Negotiate scope reduction
+1. Identify MVP scope
+2. Negotiate requirements
 3. Plan phased delivery
-4. Document technical debt
+4. Track technical debt
 
-## Example Execution
-
-```
-User: "Implement user avatar upload feature"
-
-Claude's workflow execution:
-1. ✅ Created branch: feature/123-avatar-upload
-2. ✅ Reviewed codebase: Found existing image handling in lib/uploads
-3. ✅ Planned approach: Reuse upload service, add avatar constraints
-4. ✅ Created milestone: 7 subtasks identified
-5. 🔄 Implementing with TDD:
-   - ✅ Avatar model with size constraints
-   - ✅ Upload endpoint with validation
-   - 🔄 Frontend component (in progress)
-   - ⏳ Integration with user profile
-6. 📊 Progress: 3/7 tasks complete, all tests passing
-```
-
-Remember: This workflow provides structure while maintaining flexibility. Adapt phases based on feature complexity and constraints, but never skip quality checks or documentation.
+---
+*This workflow ensures features are developed systematically with quality, tracking, and clear communication throughout.*
