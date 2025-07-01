@@ -1,16 +1,29 @@
 ---
-module: RipgrepGuide
+name: Ripgrep Search Guide
+module_type: guide
 scope: temporary
-triggers: ["rg", "ripgrep", "fast search", "search code", "grep replacement"]
-conflicts: []
-dependencies: []
 priority: low
+triggers: ["ripgrep", "rg", "fast search", "code search", "grep replacement"]
+dependencies: []
+conflicts: []
+version: 1.0.0
 ---
 
-# Ripgrep (rg) Usage Guide
+# Ripgrep (rg) Search Guide
 
 ## Purpose
-Quick reference for using ripgrep, a fast recursive search tool that respects gitignore and provides powerful pattern matching capabilities.
+Ripgrep is a line-oriented search tool that recursively searches directories for a regex pattern. It's faster than grep and respects .gitignore by default, making it ideal for searching code repositories.
+
+## Installation Check
+```bash
+# Check if installed
+command -v rg || echo "Ripgrep not installed"
+
+# Install commands
+# macOS: brew install ripgrep
+# Ubuntu: apt-get install ripgrep
+# From source: cargo install ripgrep
+```
 
 ## Basic Usage
 
@@ -22,88 +35,41 @@ rg "pattern"
 # Search for exact word
 rg -w "word"
 
-# Case-insensitive search
+# Case insensitive search
 rg -i "pattern"
 
 # Search specific file types
-rg -t python "import"
-rg -t js "console.log"
+rg "pattern" --type py
+rg "pattern" -t js
 ```
 
-## Common Patterns
-
-### Finding Function Definitions
+### Advanced Patterns
 ```bash
-# Python functions
-rg "^def \w+\(" -t py
+# Regex search
+rg "func\s+\w+\(" 
 
-# JavaScript functions
-rg "(function|const|let|var)\s+\w+\s*=" -t js
+# Multiple patterns (OR)
+rg -e "pattern1" -e "pattern2"
 
-# Go functions
-rg "^func\s+\w+" -t go
+# Show only matching parts
+rg -o "v\d+\.\d+\.\d+"
+
+# Invert match (NOT)
+rg -v "pattern"
 ```
 
-### Searching with Context
+## Context and Output
+
+### Context Lines
 ```bash
 # Show 3 lines before and after match
 rg -C 3 "error"
 
-# Show only lines before
+# Show 2 lines before
 rg -B 2 "error"
 
-# Show only lines after
+# Show 2 lines after  
 rg -A 2 "error"
-```
-
-### Excluding Patterns
-```bash
-# Exclude directories
-rg "TODO" -g '!vendor/' -g '!node_modules/'
-
-# Exclude file patterns
-rg "secret" -g '!*.test.js' -g '!*_test.go'
-
-# Invert match (show lines NOT containing pattern)
-rg -v "debug"
-```
-
-## Advanced Features
-
-### Using Regular Expressions
-```bash
-# Email addresses
-rg '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
-
-# IP addresses
-rg '\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b'
-
-# TODO/FIXME with author
-rg 'TODO|FIXME' -A 1 | rg '@\w+'
-```
-
-### File Type Management
-```bash
-# List all known file types
-rg --type-list
-
-# Define custom type
-rg --type-add 'web:*.{html,css,js}' -t web "class="
-
-# Search multiple types
-rg -t rust -t toml "version"
-```
-
-### Performance Optimization
-```bash
-# Use multiple threads (default: number of CPU cores)
-rg -j 4 "pattern"
-
-# Disable regex for literal speed
-rg -F "exact.string"
-
-# Search binary files
-rg -a "pattern"
 ```
 
 ### Output Formatting
@@ -111,31 +77,63 @@ rg -a "pattern"
 # Show only filenames
 rg -l "pattern"
 
-# Show only count
+# Show only filenames without matches
+rg --files-without-match "pattern"
+
+# Count matches per file
 rg -c "pattern"
 
-# No filename headers
-rg --no-heading "pattern"
-
-# JSON output
-rg --json "pattern"
+# No filename prefix
+rg --no-filename "pattern"
 ```
 
-## Integration Examples
+## File Selection
 
-### Finding Unused Functions
+### Include/Exclude Patterns
 ```bash
-# Find function definitions
-rg "^def (\w+)\(" -r '$1' -o | sort -u > defined.txt
+# Search only in specific files
+rg "pattern" src/*.py
 
-# Find function calls
-rg "\b(\w+)\(" -r '$1' -o | sort -u > called.txt
+# Include glob
+rg "pattern" -g "*.md"
 
-# Compare
-comm -23 defined.txt called.txt
+# Exclude glob
+rg "pattern" -g "!*.min.js"
+
+# Multiple globs
+rg "pattern" -g "*.{js,ts}" -g "!*test*"
 ```
 
-### Security Audit Patterns
+### Type Filters
+```bash
+# List available types
+rg --type-list
+
+# Common types
+rg "pattern" -t py      # Python
+rg "pattern" -t js      # JavaScript
+rg "pattern" -t md      # Markdown
+rg "pattern" -t yaml    # YAML
+```
+
+## Common Use Cases
+
+### Finding Function Definitions
+```bash
+# Python functions
+rg "^def \w+\(" -t py
+
+# JavaScript functions  
+rg "function\s+\w+\s*\(|const\s+\w+\s*=.*=>" -t js
+
+# Go functions
+rg "^func\s+(\(\w+\s+\*?\w+\)\s+)?\w+\(" -t go
+
+# Java methods
+rg "^[\t ]*(public|private|protected).*\s+\w+\s*\(" -t java
+```
+
+### Security Auditing
 ```bash
 # Hardcoded passwords
 rg -i "password\s*=\s*[\"'][^\"']+[\"']"
@@ -143,63 +141,206 @@ rg -i "password\s*=\s*[\"'][^\"']+[\"']"
 # API keys
 rg "api[_-]?key\s*[:=]\s*[\"'][0-9a-zA-Z]{20,}[\"']"
 
-# SQL injection risks
-rg "query.*\+.*request\." -t python
+# Database URLs with credentials
+rg "(mongodb|postgres|mysql)://[^@]+:[^@]+@"
+
+# TODO/FIXME comments
+rg "TODO|FIXME|HACK|XXX" -t code
+```
+
+### Code Quality Checks
+```bash
+# Console.log statements
+rg "console\.(log|error|warn)" -t js
+
+# Python print statements
+rg "^\s*print\(" -t py
+
+# Long lines
+rg "^.{100,}$"
+
+# Trailing whitespace
+rg "\s+$"
 ```
 
 ### Refactoring Helpers
 ```bash
 # Find all imports of a module
-rg "from mymodule import|import mymodule"
+rg "from mymodule import|import mymodule" -t py
 
 # Find class instantiations
-rg "new\s+ClassName\b|\bClassName\("
+rg "new\s+ClassName\b|\bClassName\(" -t js
 
-# Find deprecated function usage
-rg "deprecated_function\("
+# Find function calls
+rg "\bmyfunction\s*\("
+
+# Find unused functions (two-step)
+rg "^def (\w+)\(" -r '$1' -o | sort -u > defined.txt
+rg "\b(\w+)\(" -r '$1' -o | sort -u > called.txt
+comm -23 defined.txt called.txt  # Shows potentially unused
+```
+
+## Performance Options
+
+### Speed Optimization
+```bash
+# Use fixed strings (no regex)
+rg -F "exact string to find"
+
+# Limit search depth
+rg --max-depth 3 "pattern"
+
+# Use specific thread count
+rg -j 4 "pattern"
+
+# Ignore large files
+rg --max-filesize 1M "pattern"
+```
+
+### Memory Management
+```bash
+# Disable memory mapping
+rg --no-mmap "pattern"
+
+# Search compressed files
+rg -z "pattern" file.gz
+```
+
+## Configuration
+
+### .ripgreprc File
+```bash
+# Create global config
+cat > ~/.ripgreprc << 'EOF'
+# Smart case searching
+--smart-case
+
+# Search hidden files
+--hidden
+
+# But still ignore .git
+--glob=!.git/*
+
+# Ignore common directories
+--glob=!node_modules/*
+--glob=!venv/*
+--glob=!*.min.js
+
+# Add custom types
+--type-add=web:*.{html,css,scss,js,jsx,ts,tsx}
+--type-add=config:*.{json,yaml,yml,toml,ini}
+
+# Pretty output
+--colors=line:fg:yellow
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+EOF
+
+# Enable config
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+```
+
+## Integration Examples
+
+### With fzf (fuzzy finder)
+```bash
+# Interactive file search
+rg --files | fzf
+
+# Search and select result
+rg "pattern" --line-number | fzf
+```
+
+### In Shell Scripts
+```bash
+#!/bin/bash
+# Find all TODO comments with context
+find_todos() {
+    rg "TODO|FIXME" \
+        --type-add 'code:*.{js,py,go,java}' \
+        -t code \
+        -C 2 \
+        --heading \
+        --line-number \
+        --color always | \
+    less -R
+}
+```
+
+### Git Integration
+```bash
+# Search only tracked files
+rg "pattern" $(git ls-files)
+
+# Search in specific commit
+git show HEAD~1 | rg "pattern"
 ```
 
 ## Troubleshooting
 
-### Pattern Not Matching
-- Check regex escaping: `rg "\.txt$"` not `rg ".txt$"`
-- Use `-F` for literal strings with special chars
-- Test regex at regex101.com first
-
-### Too Many Results
-- Use `-t` to limit file types
-- Add `-g` patterns to exclude directories
-- Use `-w` for whole word matching
-
-### Performance Issues
-- Exclude large directories: `-g '!*.log'`
-- Limit search depth: `--max-depth 3`
-- Use literal search when possible: `-F`
-
-## Comparison with grep
-| Feature | grep | ripgrep |
-|---------|------|---------|
-| Speed | Slower | Much faster |
-| Gitignore | No | Yes |
-| Unicode | Limited | Full |
-| Recursive | -r flag | Default |
-| Binary files | Warning | Skips |
-
-## Quick Command Reference
+### Not Finding Expected Results
 ```bash
-rg [OPTIONS] PATTERN [PATH ...]
+# Debug what files are searched
+rg --debug "pattern" 2>&1 | grep "searched"
 
-Common OPTIONS:
-  -i    Case insensitive
-  -w    Word boundaries
-  -v    Invert match
-  -F    Fixed strings (literal)
-  -l    Files with matches
-  -c    Count matches
-  -t    File type
-  -g    Glob patterns
-  -A/B/C Context lines
-  -j    Thread count
+# Force search hidden files
+rg --hidden "pattern"
+
+# Search everything (even .git)
+rg -uu "pattern"
+
+# Check if file type is recognized
+rg --type-list | grep -i python
 ```
 
-Remember: ripgrep is optimized for searching code repositories. It automatically skips binary files and respects .gitignore, making it ideal for development workflows.
+### Pattern Issues
+```bash
+# Escape special regex characters
+rg "domain\.com"  # Not "domain.com"
+
+# Use raw strings for complex patterns
+rg $'line1\nline2'  # Multi-line pattern
+
+# Test regex separately
+echo "test string" | rg "pattern"
+```
+
+## Best Practices
+
+### DO
+- ✅ Use type filters for faster searches
+- ✅ Leverage .gitignore automatic filtering  
+- ✅ Use -F for literal string searches
+- ✅ Create aliases for common searches
+- ✅ Use --files to list files for other tools
+
+### DON'T
+- ❌ Use .* when more specific patterns work
+- ❌ Forget to quote regex patterns
+- ❌ Search binary files without need
+- ❌ Ignore built-in type definitions
+
+## Quick Reference
+```
+rg [OPTIONS] PATTERN [PATH ...]
+
+Most useful options:
+  -i, --ignore-case       Case insensitive
+  -w, --word-regexp      Match whole words
+  -v, --invert-match     Show non-matching lines
+  -F, --fixed-strings    Treat pattern as literal
+  -l, --files-with-matches    Show only filenames
+  -c, --count            Count matches per file
+  -t, --type TYPE        Search only TYPE files
+  -T, --type-not TYPE    Exclude TYPE files
+  -g, --glob GLOB        Include/exclude files
+  -A, --after-context N  Show N lines after
+  -B, --before-context N Show N lines before
+  -C, --context N        Show N lines before & after
+  --hidden               Search hidden files
+  -u, --unrestricted     Reduce filtering (-uu for none)
+```
+
+---
+*Ripgrep is the fastest code search tool available. Master it for efficient codebase navigation.*

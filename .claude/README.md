@@ -1,251 +1,183 @@
-# Modular CLAUDE.md System Implementation Request
+# Claude Modular Memory System
 
-## CRITICAL INSTRUCTIONS FOR CLAUDE
+## Overview
+This directory contains the modular memory system for Claude. Instead of loading a monolithic configuration file, modules are loaded dynamically based on context, reducing memory usage while maintaining full functionality.
 
-### Execution Approach
-1. **DO NOT load the CLAUDE.md file** from either the `main` or `modular` branch for any purpose other than analysis in pursuit of this plan's goal
-2. **Think hard and step by step** wherever possible - show your reasoning
-3. **Read this entire plan through first**, then review the existing code
-4. **Ask questions about the plan** and reiterate your understanding for my approval before proceeding
-5. **Ask questions whenever unsure** about any aspect of implementation
-6. **Ask clarifying questions** whenever something is ambiguous or unclear
-7. **Use the original CLAUDE.md from the `main` branch** as source material and make all updates to the `modular` branch
-8. **Review your work when complete** and identify areas for improvement
+## Quick Start
 
-### Required Workflow
-1. First, read and analyze this entire plan
-2. Summarize your understanding of what needs to be built
-3. Ask any clarifying questions about the requirements
-4. Get explicit approval before starting implementation
-5. Use step-by-step thinking throughout implementation
-6. Self-review and suggest improvements when done
+### Module Commands
+- `!load <module>` - Load a specific module
+- `!unload <module>` - Unload a module (if allowed)
+- `!list-modules` - Show currently loaded modules
+- `!compare <module1> <module2>` - Compare alternative approaches
+- `!reload` - Reload a module from disk
+- `!status` - Show system status
 
-## Context
-I have a large CLAUDE.md file that contains all my development processes, workflows, and configurations. It's becoming too large and consuming too much of Claude's memory by default. I want to split it into a modular system where components are loaded conditionally based on context.
+### Default Modules
+These modules are always loaded:
+- `core/principles.md` - Fundamental ALWAYS/NEVER rules
+- `patterns/development/tdd-pattern.md` - Default development methodology
+- `processes/version-control/commit-standards.md` - Commit conventions
 
-## Current System Overview
-My CLAUDE.md contains:
-- Development workflows (Feature Development, Bug Fix, Refactoring)
-- Processes (TDD, Code Review, Issue Tracking, Pre-commit management)
-- Tool configurations (git, grep, etc.)
-- Principles (ALWAYS/NEVER rules)
-- Data sanitization procedures
-- Pre-commit hook management
+## Directory Structure
 
-## Requirements
-1. Create a modular system with files stored in ~/.claude/
-2. Minimize default memory usage while retaining full functionality
-3. Use hybrid approach: context-based automatic loading + project-type detection
-4. Some modules should load by default (like TDD), others on-demand
-5. Modules should be organized by function in directory structure
-6. Support different memory scopes:
-   - Persistent: Always loaded (like TDD)
-   - Context: Loaded for specific work domains
-   - Temporary: Loaded for specific tasks then unloaded
-   - Locked: Never unloaded unless explicitly unlocked
-7. Include commands like !load, !unload, !list-modules, !compare
-8. Create meta-modules for:
-   - How to create new modules
-   - How to validate modules
-   - How to review system architecture
-
-## Directory Structure Needed
 ```
-~/.claude/
-├── manifest.md            # Always loaded - registry of all modules
-├── core/
-│   ├── principles.md      # ALWAYS/NEVER rules
-│   ├── defaults.md        # Default configurations
-│   └── loader.md          # Module loading logic
-├── processes/
-│   ├── testing/
-│   │   ├── tdd.md
-│   │   ├── cdd.md
-│   │   ├── bdd.md
-│   │   └── _meta.md      # Testing category metadata
-│   ├── version-control/
-│   │   ├── git-workflow.md
-│   │   ├── commit-standards.md
-│   │   ├── pre-commit-management.md
-│   │   └── _meta.md
-│   ├── issue-tracking/
-│   │   ├── github-issues.md
-│   │   ├── project-management.md
-│   │   └── _meta.md
-│   └── code-review/
-│       ├── codebase-analysis.md
-│       ├── review-checklist.md
-│       └── _meta.md
-├── workflows/
+.claude/
+├── manifest.md              # Module registry (always loaded)
+├── core/                    # Core system modules
+│   ├── principles.md        # ALWAYS/NEVER rules
+│   ├── defaults.md          # System configurations
+│   └── loader.md            # Module loading logic
+├── processes/               # Step-by-step procedures
+│   ├── testing/            # Testing methodologies
+│   ├── version-control/    # Git workflows
+│   ├── issue-tracking/     # Issue management
+│   ├── code-review/        # Review processes
+│   ├── security/           # Security procedures
+│   └── tooling/            # Tool management
+├── workflows/              # Multi-process orchestrations
 │   ├── feature-development.md
 │   ├── bug-fix.md
-│   ├── refactoring.md
-│   └── _meta.md
-├── patterns/
-│   ├── development/
-│   │   ├── tdd-pattern.md
-│   │   ├── cdd-pattern.md
-│   │   └── _meta.md
-│   └── architecture/
-│       ├── single-responsibility.md
-│       └── _meta.md
-├── guides/
-│   └── tools/
-│       ├── search/
-│       │   ├── grep.md
-│       │   ├── ripgrep.md
-│       │   └── awk.md
-│       ├── sanitization/
-│       │   ├── sed.md
-│       │   ├── python-sanitize.md
-│       │   └── jq.md
-│       └── _meta.md
-└── templates/
-    ├── reports/
-    │   ├── bug-analysis.md
-    │   └── feature-planning.md
-    └── outputs/
-        ├── commit-message.md
-        └── pr-description.md
+│   └── refactoring.md
+├── patterns/               # Development methodologies
+│   ├── development/        # TDD, CDD, BDD
+│   └── architecture/       # Design patterns
+├── guides/                 # Reference documentation
+│   └── tools/              # Tool usage guides
+├── templates/              # Reusable templates
+└── meta/                   # System management
+    ├── module-creation-guide.md
+    └── module-validation.md
 ```
-## Module Structure Requirements
-Each module needs:
-- YAML frontmatter with: module name, scope, triggers, conflicts, dependencies, priority
-- Clear purpose statement
-- Structured content based on type (Process/Workflow/Pattern/Guide)
-- Integration points with other modules
 
-## Specific Conversions Needed
-Please convert these existing processes into modules:
+## Module Types
 
-1. **TestDrivenDevelopment** (from my CLAUDE.md)
-   - Should be persistent scope
-   - Default development pattern
-   - Must enforce commits after each red-green-refactor cycle
-   - Must push changes after successful commits
-   - Must handle pre-commit hook failures with issue tracking
-   - Must prevent orphaned issues
+### Process Modules
+Step-by-step procedures for specific tasks
+- Example: `processes/testing/tdd.md`
+- Scope: Usually context or persistent
+- Contains: Detailed steps, integration points
 
-2. **CodebaseReview** (from my CLAUDE.md)
-   - Context scope
-   - Executes before any planning
-   - Has conditional execution based on task type (Feature/Bug/Refactor)
+### Workflow Modules
+Orchestrate multiple processes
+- Example: `workflows/feature-development.md`
+- Scope: Context
+- Contains: Process sequence, decision points
 
-3. **PreCommitConfiguration** and **PreCommitHookContribution**
-   - Must check for .pre-commit-config.yaml on repository setup
-   - Must identify recurring problems that could be solved by hooks
-   - Must contribute valuable hooks back to github.com/aRustyDev/pre-commit-hooks
+### Pattern Modules
+Define development methodologies
+- Example: `patterns/development/tdd-pattern.md`
+- Scope: Persistent or context
+- Contains: Principles, rules, examples
 
-4. **DataSanitization**
-   - Must sanitize all outputs before posting to GitHub
-   - Must use configurable tools (sed, awk, perl, python, jq)
-   - Must handle PII, credentials, system paths, etc.
+### Guide Modules
+Reference documentation
+- Example: `guides/tools/search/ripgrep.md`
+- Scope: Temporary
+- Contains: Usage examples, tips
 
-5. **FeatureDevelopment** workflow
-   - Shows how workflows orchestrate processes
-   - Includes decision points and checkpoints
+### Meta Modules
+System management and administration
+- Example: `meta/module-creation-guide.md`
+- Scope: Persistent or context
+- Contains: Meta-information about the system
 
-6. **Tool guides** (like ripgrep)
-   - Temporary scope
-   - Load only when needed
+## Module Loading
 
-## Key Features to Implement
+### Automatic Loading
+Modules load based on:
+1. Keywords in conversation
+2. Context detection
+3. Dependencies of other modules
+4. Default configuration
 
-### Memory Management
-- Persistent modules stay loaded
-- Context modules load/unload based on work domain
-- Temporary modules unload after use
-- Memory reinforcement every 10 interactions
-- Core principles NEVER unload
-
-### Conflict Prevention
-- Conflicting modules (like TDD vs CDD) can't load simultaneously
-- System prompts for comparison when appropriate
-- User must approve loading competing patterns
-
-### Data Sanitization Integration
-The data sanitization process needs configurable tools:
-```yaml
-sanitization_tools:
-  text: [sed, awk, perl, python]
-  json: [jq, python]
-  structured_logs: [awk, python]
+### Manual Loading
+Use commands to explicitly control modules:
 ```
-With patterns for:
+!load processes/testing/tdd.md
+!unload guides/tools/search/ripgrep.md
+```
 
-Email addresses, usernames, paths
-SSH keys, API tokens, passwords
-UUIDs, GUIDs, IP addresses
-Database URLs, credentials
+### Scope Rules
+- **persistent**: Never automatically unloaded
+- **context**: Unloaded when context changes
+- **temporary**: Unloaded after N interactions
+- **locked**: Only manual control
 
-Module Loading Logic
+## Creating New Modules
 
-Automatic loading based on keywords/context
-Explicit loading via commands
-Dependencies auto-load
-Conflicts prevent dual loading
-Comparison prompts when uncertainty exists
+1. **Determine module type** (process, workflow, pattern, guide, meta)
+2. **Create file** in appropriate directory
+3. **Add frontmatter** with required fields:
+   ```yaml
+   ---
+   name: Module Name
+   module_type: process
+   scope: context
+   priority: medium
+   triggers: ["keyword1", "keyword2"]
+   dependencies: []
+   conflicts: []
+   version: 1.0.0
+   ---
+   ```
+4. **Write content** following type-specific template
+5. **Validate** using `!validate <module>`
+6. **Update manifest** if needed
 
-Deliverables Needed
+## Key Modules
 
-Core CLAUDE.md file (minimal, always loaded)
+### Development
+- `processes/testing/tdd.md` - Test-driven development
+- `workflows/feature-development.md` - Feature implementation
+- `processes/code-review/codebase-analysis.md` - Code analysis
 
-Universal principles (ALWAYS ask for clarification, etc.)
-Configuration (tools, defaults)
-Module management commands
-Module registry/manifest
+### Version Control
+- `processes/version-control/commit-standards.md` - Commit conventions
+- `processes/version-control/workspace-setup.md` - Branch management
 
+### Security
+- `processes/security/data-sanitization.md` - Remove sensitive data
+- `processes/tooling/tool-selection.md` - Tool fallback chains
 
-Meta-modules (in core/meta/):
+### System Management
+- `meta/module-creation-guide.md` - How to create modules
+- `meta/module-validation.md` - Module quality checks
 
-module-creation-guide.md: Templates and standards for new modules
-module-validation.md: 4-level validation process
-architecture-review.md: System health checking
+## Best Practices
 
+### Module Design
+- Single responsibility per module
+- Clear dependencies
+- Appropriate scope
+- Comprehensive documentation
 
-Converted modules as examples:
+### System Usage
+- Let automatic loading work
+- Override when needed
+- Monitor loaded modules
+- Report issues
 
-patterns/development/tdd-pattern.md
-processes/code-review/codebase-analysis.md
-processes/version-control/pre-commit-management.md
-processes/security/data-sanitization.md
-workflows/feature-development.md
-guides/tools/search/ripgrep.md
+## Troubleshooting
 
+### Module Not Loading
+1. Check triggers in manifest
+2. Verify dependencies available
+3. Look for conflicts
+4. Try manual load
 
-Implementation notes explaining:
+### System Slow
+1. Check loaded module count
+2. Unload temporary modules
+3. Review module scopes
+4. Restart if needed
 
-How the system works
-Benefits of the modular approach
-Migration strategy from monolithic to modular
-How to extend the system
+### Finding Modules
+1. Check manifest.md
+2. Browse directories
+3. Use partial matching
+4. Read category _meta.md files
 
+---
 
-
-Important Constraints
-
-Modules must follow Single Responsibility Principle
-Issue tracking must capture all problems/solutions/lessons learned
-Pre-commit configurations should NEVER be edited without permission
-All development work must be rigorously tracked in GitHub issues
-No orphaned issues allowed
-Data must be sanitized before posting to public repositories
-Tool selections must be configurable, not hard-coded
-
-Git Branch Strategy
-
-Source material: Read CLAUDE.md from main branch
-All new modular files: Create on modular branch
-Preserve original CLAUDE.md unchanged on main
-Create clear commit messages for each module added
-
-Questions to Answer Before Starting
-Before you begin implementation, please:
-
-Confirm you understand the modular loading strategy
-Clarify any ambiguous requirements
-Verify the directory structure makes sense
-Ask about any missing specifications
-Summarize the implementation plan for approval
-
-Please create this complete modular system with all files and documentation needed for implementation, thinking step-by-step through each component.
+The modular system provides flexibility while maintaining consistency. Modules can be added, updated, or removed without affecting the core system, making it maintainable and extensible.
