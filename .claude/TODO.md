@@ -101,3 +101,13 @@ Description of lessons learned this week from challenges and their solutions.
 ### Front End UX Design Expert
 
 ### Front End Engineer
+
+### Political Scientist
+
+### Political Strategist
+
+### Campaign Manager
+
+### Campaign Strategist
+
+### Director of communications
