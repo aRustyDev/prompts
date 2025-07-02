@@ -95,3 +95,9 @@ Description of lessons learned this week from challenges and their solutions.
 
 ### 3D Printer Expert 
 - Thermal Expansion Consideration on Print Plan
+
+### Front End UI Design Expert
+
+### Front End UX Design Expert
+
+### Front End Engineer
