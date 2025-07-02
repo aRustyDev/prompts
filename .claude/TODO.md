@@ -4,6 +4,13 @@
 - Add In Prompt testing for Rust https://github.com/budziq/rust-skeptic
 - Implement regression testing process and add to testing workflow
 - Add preference for `orb` > `docker`
+- Add HostOS Conditionals
+- Add to Dev Workflow
+  - Tagging
+  - Changelog Updates
+  - Version Bumping
+  - Code Deduplication
+  - Code Duplicate Identification
 - Add Guides
   - Python Testing
   - Rust Testing
