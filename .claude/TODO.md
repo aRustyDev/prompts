@@ -1,168 +1,109 @@
 # TODO
 
-- Implement TDD Prompt Engineering workflow (Promptimize framework, Promptfoo, Textlint, Markdownlint, DeepEval, Yajsv);  Conversation Regressio Testing
-- Add In Prompt testing for Rust https://github.com/budziq/rust-skeptic
-- Implement regression testing process and add to testing workflow
-- Add preference for `orb` > `docker`
-- Add HostOS Conditionals
-- Add to Dev Workflow
-  - Tagging
-  - Changelog Updates
-  - Version Bumping
-  - Code Deduplication
-  - Code Duplicate Identification
-  - Link created projects to the repo, unless specified otherwise
-- Add Guides
-  - Python Testing
-  - Rust Testing
-  - Golang Testing
-  - Kubernetes
-  - Talos
-  - Bottlerocket Project
-  - Nix
-  - Nix Darwin
-  - Home-manager
-  - dotfiles
-  - gh cli
-    - gh project (specifically adding the project permissions)
-    - gh attestation verify
-    - gh auth refresh
-    - gh gist
-    - gh repo
-    - gh issue
-    - gh label
-    - gh pr
-    - gh release
-    - gh run
-    - gh search
-    - gh secret
-    - gh variable
-    - gh workflow
-- Add process/workflow for identifying a short task that should be scripted (ie convert "known string: x hrs" to "known string: 'xh'" in a group of template based files) and then creating a short script for that task.
-- Add conditional `@~/workflow/*` references, to minimize memory load w/ not neccessary
-- Add conditional `@~/templates/*` references, to minimize memory load w/ not neccessary
-- Add conditional `@~/processes/*` references, to minimize memory load w/ not neccessary
-- Add conditional `@~/commands/*` references, to minimize memory load w/ not neccessary
-- Add conditional `@~/helpers/*` references, to minimize memory load w/ not neccessary
-- Add `/plan feature` command; interactively query for refactor details, and clarify until plan is ready, then add plan to issue tracker as project/milestone
-- Add `/plan fix` command; interactively query for fix details, then assess and requery/clarify until plan is ready, then add plan to issue tracker as project/milestone
-- Add `/plan refactor` command; interactively query for refactor details, then assess and requery/clarify until plan is ready, then add plan to issue tracker as project/milestone
-- Add `/assess codebase` command; assess code base
-- Add `/assess osint` command; assess osint for org after querying for basic details
-- Add `/assess vulnerabilities` command; assess vulnerability landscape for org after querying for basic details
-- Add `/hunt init` command; iteratively configure threat hunt plan
-- Add `/hunt explore` command; Use configured data to begin preparatory hunt exploration and analysis (ie develop threat intel)
-- Add `/hunt plan` command; Iteratively develop plan to hunt based on exploration and clarification.
-- Add `/hunt discover` command; Begin using plan to hunt
-- Add `/jira war` command; record WAR in jira format
-  - Task(On Opening): Title, Expected Hours, Description of expected work
-  - Logged Work[n]: Date started, Time Spent, Work Description, related challenges discovered, related solutions implemented, description of related Research and exploration, code changs involved
-  - Task(On Closing): Title, Total Changes, Description of Impact, Lessons Learned Overall
-  - Format
-```markdown
-NOTE: times (estimated, actual, or total) should be formatted as 3w 4d 12h, and should be enclosed in quotes
-# Week MM-DD-2025
+<!-- Captured by Claude on 2025-07-02 -->
+<!-- All items below have been converted to GitHub issues -->
+<!-- Projects created: #17 (Claude Code Enhancement Suite), #18 (Claude Code Commands & Roles) -->
+<!-- Milestones created: Testing & Quality Framework, Cross-Platform Compatibility, Command Suite v1.0, Expert Roles System -->
+<!-- Parent issues created: #1, #8, #9, #10, #11, #12, #13, #14, #15, #16, #17 -->
+<!-- Total issues created: 85 (17 parent + 68 child issues) -->
 
-## Implement Testing: <Descriptive Subtitle Here>
-### Task: On Opening
-Expected Time to complete: "x+y h"
-Description of expected work here
+## ✅ CAPTURED ITEMS
 
-Expected Work:
-- foo (x hrs)
-- bar (y hrs)
+### Testing Framework (Issue #1)
+- ~~Implement TDD Prompt Engineering workflow (Promptimize framework, Promptfoo, Textlint, Markdownlint, DeepEval, Yajsv);  Conversation Regressio Testing~~ → Issue #2
+- ~~Add In Prompt testing for Rust https://github.com/budziq/rust-skeptic~~ → Issue #3
+- ~~Implement regression testing process and add to testing workflow~~ → Issue #4
 
----
+### OS Compatibility (Issue #9)
+- ~~Add preference for `orb` > `docker`~~ → Issue #25
+- ~~Add HostOS Conditionals~~ → Issue #26
 
-### Logged work: foo
-Date started: MM-DD-2025
-Actual Time Spent: z hrs
-Work Description after the fact, include unplanned work involved in completing this
+### Dev Workflow (Issue #8)
+- ~~Add to Dev Workflow~~
+  - ~~Tagging~~ → Issue #18
+  - ~~Changelog Updates~~ → Issue #19
+  - ~~Version Bumping~~ → Issue #20
+  - ~~Code Deduplication~~ → Issue #21
+  - ~~Code Duplicate Identification~~ → Issue #22
+  - ~~Link created projects to the repo, unless specified otherwise~~ → Issue #23
 
-#### Challenges
-Description of challenges related to this item of logged work
+### Guides (Issues #1, #14, #15)
+- ~~Add Guides~~
+  - ~~Python Testing~~ → Issue #5
+  - ~~Rust Testing~~ → Issue #6
+  - ~~Golang Testing~~ → Issue #7
+  - ~~Kubernetes~~ → Issue #65
+  - ~~Talos~~ → Issue #66
+  - ~~Bottlerocket Project~~ → Issue #67
+  - ~~Nix~~ → Issue #68
+  - ~~Nix Darwin~~ → Issue #69
+  - ~~Home-manager~~ → Issue #70
+  - ~~dotfiles~~ → Issue #71
+  - ~~gh cli~~ → Issues #51-64
+    - ~~gh project (specifically adding the project permissions)~~ → Issue #51
+    - ~~gh attestation verify~~ → Issue #52
+    - ~~gh auth refresh~~ → Issue #53
+    - ~~gh gist~~ → Issue #54
+    - ~~gh repo~~ → Issue #55
+    - ~~gh issue~~ → Issue #56
+    - ~~gh label~~ → Issue #57
+    - ~~gh pr~~ → Issue #58
+    - ~~gh release~~ → Issue #59
+    - ~~gh run~~ → Issue #60
+    - ~~gh search~~ → Issue #61
+    - ~~gh secret~~ → Issue #62
+    - ~~gh variable~~ → Issue #63
+    - ~~gh workflow~~ → Issue #64
 
-#### Solutions
-Description of Solutions to the challenges in this item of logged work
+### Script Generation (Issue #8)
+- ~~Add process/workflow for identifying a short task that should be scripted~~ → Issue #24
 
-#### Research & Exploration
-Description of Research and Exploration conducted in relation to this logged work.
+### Conditional Loading (Issue #9)
+- ~~Add conditional `@~/workflow/*` references~~ → Issue #27
+- ~~Add conditional `@~/templates/*` references~~ → Issue #28
+- ~~Add conditional `@~/processes/*` references~~ → Issue #29
+- ~~Add conditional `@~/commands/*` references~~ → Issue #30
+- ~~Add conditional `@~/helpers/*` references~~ → Issue #31
 
-#### Code Changes Involved
-Lines of code Added/Removed
-High level description of code changes, minimal code examples
-Files changed: x
-- path/to/file1
-- path/to/file2
+### Planning Commands (Issue #10)
+- ~~Add `/plan feature` command~~ → Issue #32
+- ~~Add `/plan fix` command~~ → Issue #33
+- ~~Add `/plan refactor` command~~ → Issue #34
+- ~~Add `/plan-from-scratch` command~~ → Issue #35
 
----
+### Assessment Commands (Issue #11)
+- ~~Add `/assess codebase` command~~ → Issue #37
+- ~~Add `/assess osint` command~~ → Issue #38
+- ~~Add `/assess vulnerabilities` command~~ → Issue #39
 
-### Task: On Closing
-High level description of total changes
-Description of impact of work in this task on the project as a whole.
-Total time spent: x hrs
-Reason for time discrepency: foo bar blah blah
+### Threat Hunting Commands (Issue #12)
+- ~~Add `/hunt init` command~~ → Issue #40
+- ~~Add `/hunt explore` command~~ → Issue #41
+- ~~Add `/hunt plan` command~~ → Issue #42
+- ~~Add `/hunt discover` command~~ → Issue #43
 
-#### Lessons Learned
-Description of lessons learned this week from challenges and their solutions.
-```
+### Activity Tracking (Issue #13)
+- ~~Add `/jira war` command~~ → Issue #45
+- ~~`/todo-2-issues` extensions~~ → Issues #46-50
 
-## [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
+### Hooks (Issue #16)
+- ~~Add notification Hooks (Via Slack)~~ → Issue #72
+- ~~Add logging Hooks (Log to `~/.claude/logs/`)~~ → Issue #73
+- ~~Add Automatic formatting Hooks~~
+  - ~~Prettier~~ → Issue #74
+  - ~~gofmt~~ → Issue #75
+  - ~~cargo fmt~~ → Issue #76
+- ~~Add `op` PreToolUse events~~ → Issue #77
 
-- Add notification Hooks
-  - Via Slack
-- Add logging Hooks
-  - Log to `~/.claude/logs/`
-- Add Automatic formatting Hooks
-  - Prettier
-  - gofmt
-  - cargo fmt
-- Add `op` PreToolUse events
+### Expert Roles (Issue #17)
+- ~~CAD Design Expert~~ → Issue #78
+- ~~KiCAD Design Expert~~ → Issue #79
+- ~~3D Printer Expert~~ → Issue #80
+- ~~Front End UI Design Expert~~ → Issue #81
+- ~~Front End UX Design Expert~~ → Issue #82
+- ~~Front End Engineer~~ → Issue #83
+- ~~Political Scientist~~ → Issue #84
+- ~~Political/Campaign roles~~ → Issue #85
 
-## Commands
-
-- `/todo-2-issues` : Find and read `TODO.md` files, understand their contents, then try to understand the contents in relation to the repo, prompt to validate/clarify and confirm, then create issue
-  - extend to support `jj`
-  - extend to support `glab`, `jira`, `bitbucket`
-  - extend to update `TODO.md` files after successful creation of issues
-    - Clear captured TODO items, any that failed to be captured should remain in the `TODO.md`
-    - Add comment "Captured by Claude"
-- `/plan-feature`
-- `/plan-fix`
-- `/plan-refactor`
-- `/plan-from-scratch` : Create a broad plan for a repo (new or otherwise), analyze the requirements and create a plan, then turn that plan into a repo project, milestones, and linked issues and child issues.
-- `/explain`
-- `/`
-
-## Roles
-
-### CAD Design Expert 
-- AutoDesk
-- Fusion
-- AutoCAD
-
-### KiCAD Design Expert 
-- KiCAD
-- FreePCB
-- Altium
-- LTSpice
-- EasyEDA
-
-### 3D Printer Expert 
-- Thermal Expansion Consideration on Print Plan
-
-### Front End UI Design Expert
-
-### Front End UX Design Expert
-
-### Front End Engineer
-
-### Political Scientist
-
-### Political Strategist
-
-### Campaign Manager
-
-### Campaign Strategist
-
-### Director of communications
+## 📝 NEW TODO ITEMS
+<!-- Add new TODO items below this line -->
