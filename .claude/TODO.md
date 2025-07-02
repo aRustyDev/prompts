@@ -78,3 +78,20 @@ Reason for time discrepency: foo bar blah blah
 #### Lessons Learned
 Description of lessons learned this week from challenges and their solutions.
 ```
+
+## Roles
+
+### CAD Design Expert 
+- AutoDesk
+- Fusion
+- AutoCAD
+
+### KiCAD Design Expert 
+- KiCAD
+- FreePCB
+- Altium
+- LTSpice
+- EasyEDA
+
+### 3D Printer Expert 
+- Thermal Expansion Consideration on Print Plan
