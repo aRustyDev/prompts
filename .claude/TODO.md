@@ -22,6 +22,21 @@
   - Nix Darwin
   - Home-manager
   - dotfiles
+  - gh cli
+    - gh project (specifically adding the project permissions)
+    - gh attestation verify
+    - gh auth refresh
+    - gh gist
+    - gh repo
+    - gh issue
+    - gh label
+    - gh pr
+    - gh release
+    - gh run
+    - gh search
+    - gh secret
+    - gh variable
+    - gh workflow
 - Add process/workflow for identifying a short task that should be scripted (ie convert "known string: x hrs" to "known string: 'xh'" in a group of template based files) and then creating a short script for that task.
 - Add conditional `@~/workflow/*` references, to minimize memory load w/ not neccessary
 - Add conditional `@~/templates/*` references, to minimize memory load w/ not neccessary
