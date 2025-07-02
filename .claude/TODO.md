@@ -106,9 +106,26 @@ Reason for time discrepency: foo bar blah blah
 Description of lessons learned this week from challenges and their solutions.
 ```
 
+## [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
+
+- Add notification Hooks
+  - Via Slack
+- Add logging Hooks
+  - Log to `~/.claude/logs/`
+- Add Automatic formatting Hooks
+  - Prettier
+  - gofmt
+  - cargo fmt
+- Add `op` PreToolUse events
+
 ## Commands
 
 - `/todo-2-issues` : Find and read `TODO.md` files, understand their contents, then try to understand the contents in relation to the repo, prompt to validate/clarify and confirm, then create issue
+  - extend to support `jj`
+  - extend to support `glab`, `jira`, `bitbucket`
+  - extend to update `TODO.md` files after successful creation of issues
+    - Clear captured TODO items, any that failed to be captured should remain in the `TODO.md`
+    - Add comment "Captured by Claude"
 - `/plan-feature`
 - `/plan-fix`
 - `/plan-refactor`
