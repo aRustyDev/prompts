@@ -106,6 +106,16 @@ Reason for time discrepency: foo bar blah blah
 Description of lessons learned this week from challenges and their solutions.
 ```
 
+## Commands
+
+- `/todo-2-issues` : Find and read `TODO.md` files, understand their contents, then try to understand the contents in relation to the repo, prompt to validate/clarify and confirm, then create issue
+- `/plan-feature`
+- `/plan-fix`
+- `/plan-refactor`
+- `/plan-from-scratch` : Create a broad plan for a repo (new or otherwise), analyze the requirements and create a plan, then turn that plan into a repo project, milestones, and linked issues and child issues.
+- `/explain`
+- `/`
+
 ## Roles
 
 ### CAD Design Expert 
