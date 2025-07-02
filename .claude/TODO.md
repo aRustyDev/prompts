@@ -18,6 +18,10 @@
   - Kubernetes
   - Talos
   - Bottlerocket Project
+  - Nix
+  - Nix Darwin
+  - Home-manager
+  - dotfiles
 - Add process/workflow for identifying a short task that should be scripted (ie convert "known string: x hrs" to "known string: 'xh'" in a group of template based files) and then creating a short script for that task.
 - Add conditional `@~/workflow/*` references, to minimize memory load w/ not neccessary
 - Add conditional `@~/templates/*` references, to minimize memory load w/ not neccessary
