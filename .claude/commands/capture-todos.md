@@ -2,7 +2,7 @@
 name: capture-todos
 description: Analyze TODO.md files in the repository and convert them to GitHub issues with proper organization
 author: Claude Code
-version: 1.0.0
+version: 1.2.0
 ---
 
 # Capture TODOs Command
@@ -62,6 +62,8 @@ Create a structured plan:
 ### Organizational Units
 - **Milestones**: For groups with 5+ related items
 - **Projects**: For groups with 10+ items or complex workflows
+  - Projects MUST be linked to the current repository
+  - Use repository-scoped projects for better integration
 - **Labels**: Based on categories, priorities, and tags
 
 ### Issue Hierarchy
@@ -105,10 +107,40 @@ Labels to use: [list of labels]
 1. Ask: "Ready to create these issues? (y/n)"
 2. If approved, execute using `gh` CLI:
    - Create milestones first
-   - Create projects
+   - Create projects and link them to the repository (requires two steps):
+     ```bash
+     # Step 1: Get repository ID
+     REPO_ID=$(gh api repos/:owner/:repo --jq .node_id)
+     
+     # Step 2: Create project (returns project URL)
+     PROJECT_URL=$(gh project create --owner @me --title "Project Name" --format json | jq -r '.url')
+     
+     # Step 3: Extract project ID from URL
+     PROJECT_ID=$(gh api graphql -f query='
+       query($url: URI!) {
+         resource(url: $url) {
+           ... on ProjectV2 {
+             id
+           }
+         }
+       }' -f url="$PROJECT_URL" --jq '.data.resource.id')
+     
+     # Step 4: Link project to repository
+     gh api graphql -f query='
+       mutation($projectId: ID!, $repoId: ID!) {
+         linkProjectV2ToRepository(input: {
+           projectId: $projectId
+           repositoryId: $repoId
+         }) {
+           repository {
+             name
+           }
+         }
+       }' -f projectId="$PROJECT_ID" -f repoId="$REPO_ID"
+     ```
    - Create parent issues
    - Create child issues with parent references
-   - Add to projects/milestones
+   - Add issues to projects/milestones
 
 ## Important Guidelines
 
@@ -151,5 +183,64 @@ Found 12 TODO items in 4 categories...
 
 [Continues through all phases]
 ```
+
+## Project Creation Details
+
+When creating GitHub projects:
+1. **Two-step process required**: GitHub CLI doesn't support creating repository-linked projects in one command
+2. **Always link to repository**: Use GraphQL API after creation to establish the link
+3. **Choose appropriate visibility**: Default to repository visibility
+4. **Add useful fields**: Status, Priority, Assignee, Due Date
+5. **Create views**: Board view for workflow, Table view for overview
+
+### Complete project creation and linking example:
+```bash
+# Step 1: Get repository details
+OWNER=$(gh repo view --json owner -q .owner.login)
+REPO_NAME=$(gh repo view --json name -q .name)
+REPO_ID=$(gh api repos/$OWNER/$REPO_NAME --jq .node_id)
+
+# Step 2: Create project at user level (returns project details)
+PROJECT_JSON=$(gh project create \
+  --owner @me \
+  --title "TODO Migration - $(date +%Y-%m-%d)" \
+  --format json)
+
+PROJECT_NUMBER=$(echo "$PROJECT_JSON" | jq -r '.number')
+PROJECT_URL=$(echo "$PROJECT_JSON" | jq -r '.url')
+
+# Step 3: Get project ID (needed for linking)
+PROJECT_ID=$(gh api graphql -f query='
+  query($url: URI!) {
+    resource(url: $url) {
+      ... on ProjectV2 {
+        id
+      }
+    }
+  }' -f url="$PROJECT_URL" --jq '.data.resource.id')
+
+# Step 4: Link project to repository
+gh api graphql -f query='
+  mutation($projectId: ID!, $repoId: ID!) {
+    linkProjectV2ToRepository(input: {
+      projectId: $projectId
+      repositoryId: $repoId
+    }) {
+      repository {
+        name
+      }
+    }
+  }' -f projectId="$PROJECT_ID" -f repoId="$REPO_ID"
+
+echo "✅ Project #$PROJECT_NUMBER created and linked to $OWNER/$REPO_NAME"
+
+# Step 5: Add issues to project
+gh project item-add $PROJECT_NUMBER --owner @me --url "$ISSUE_URL"
+```
+
+### Why this complexity?
+- GitHub CLI's `gh project create` doesn't have a `--repository` flag
+- Projects must be created first, then linked via GraphQL API
+- This is a current limitation of GitHub's implementation
 
 Remember: The goal is to transform scattered TODO items into a well-organized, actionable issue tracking system that preserves context and facilitates project management.
