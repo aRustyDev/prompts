@@ -11,6 +11,7 @@
   - Version Bumping
   - Code Deduplication
   - Code Duplicate Identification
+  - Link created projects to the repo, unless specified otherwise
 - Add Guides
   - Python Testing
   - Rust Testing
