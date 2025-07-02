@@ -3,6 +3,7 @@
 - Implement TDD Prompt Engineering workflow (Promptimize framework, Promptfoo, Textlint, Markdownlint, DeepEval, Yajsv);  Conversation Regressio Testing
 - Add In Prompt testing for Rust https://github.com/budziq/rust-skeptic
 - Implement regression testing process and add to testing workflow
+- Add preference for `orb` > `docker`
 - Add Guides
   - Python Testing
   - Rust Testing
