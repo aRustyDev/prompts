@@ -206,10 +206,12 @@ When refactoring:
 ❌ Modifying shared prompts in ways that break other users
 ✅ Using extensions that preserve backward compatibility
 
-## Integration with create-command
+## Integration with command management
 
-The `/create-command` slash command (v2.0.0) implements these principles through:
-- Phase 2: Process Detection & Analysis
+The `/project:command` slash command (v3.0.0) implements these principles through:
+- `init` subcommand: Process Detection & Analysis during command creation
+- `update` subcommand: Reusability check when enhancing commands
+- `review` subcommand: Principles alignment analysis
 - Automatic search of ~/.claude/ directories
 - Interactive conflict resolution
 - Clear documentation of reused processes
