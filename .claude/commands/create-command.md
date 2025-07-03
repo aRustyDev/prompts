@@ -2,12 +2,12 @@
 name: create-command
 description: Interactive command creator that guides you through building custom slash commands with comprehensive requirements analysis
 author: Claude Code
-version: 1.0.0
+version: 2.0.0
 ---
 
-# Create Command - Interactive Slash Command Builder
+# Create Command - Interactive Slash Command Builder with Process Detection
 
-I'll help you create a custom slash command by thoroughly understanding your needs and building a solution that exceeds your expectations. Let's work through this step-by-step.
+I'll help you create a custom slash command by thoroughly understanding your needs, detecting reusable processes, and building a solution that leverages existing modules while exceeding your expectations. Let's work through this step-by-step.
 
 ## Phase 1: Goal Discovery 🎯
 
@@ -26,9 +26,83 @@ First, I need to understand what you want to accomplish:
 - What currently takes too much time or is error-prone?
 - What would success look like for this command?
 
-## Phase 2: Requirements Gathering 📋
+## Phase 2: Process Detection & Analysis 🔍
 
-Based on the goal, I'll generate comprehensive requirements:
+Before gathering new requirements, I'll analyze if any existing processes match your needs:
+
+### Process Scanning
+1. **Analyze description keywords** to identify potential process matches
+2. **Search ~/.claude/processes** for relevant modules:
+   - Version control processes (commits, branches, PRs)
+   - Testing processes (TDD, BDD, CDD)
+   - Issue tracking workflows
+   - Code review procedures
+   - Security protocols
+   - Tool selection patterns
+
+### Process Matching Algorithm
+For each potential match:
+1. Calculate relevance score based on:
+   - Keyword overlap
+   - Workflow similarity
+   - Input/output compatibility
+   - Tool requirements alignment
+
+2. Present high-confidence matches:
+   ```
+   Found potential process match:
+   - Process: [process-name]
+   - Relevance: [score]%
+   - Description: [what it does]
+   - Key features: [list]
+   ```
+
+3. Ask for confirmation:
+   "Would you like to use the existing [process-name] process for [specific functionality]?
+   
+   Benefits of reusing:
+   - Consistent behavior across commands
+   - Well-tested implementation
+   - Automatic updates when process improves
+   
+   [View process details] [Use this process] [Create custom instead]"
+
+### Conflict Detection
+If choosing to use existing process:
+1. **Identify conflicts** between desired behavior and existing process
+2. **Present each conflict** for resolution:
+   ```
+   Conflict detected:
+   - You described: [user's description]
+   - Process does: [existing behavior]
+   
+   How would you like to resolve this?
+   1. Use existing behavior
+   2. Create command-specific override
+   3. Propose change to shared process
+   ```
+
+### Missing Feature Detection
+Identify features you want that aren't in the shared process:
+1. **List missing capabilities**
+2. **For each missing feature, ask**:
+   ```
+   The [process-name] process doesn't include [feature].
+   
+   Would you like to:
+   1. Add this to the shared process (benefits all commands)
+   2. Create a conditional extension (only your command uses it)
+   3. Implement separately in your command
+   4. Skip this feature
+   
+   If adding to shared process:
+   - Should this be always active?
+   - Or activated by a flag/condition?
+   ```
+
+## Phase 3: Requirements Gathering 📋
+
+Based on the goal and process analysis, I'll generate comprehensive requirements:
 
 ### Functional Requirements
 - What specific actions must the command perform?
@@ -57,7 +131,7 @@ Based on the goal, I'll generate comprehensive requirements:
 - What constitutes a successful execution?
 - What error conditions need handling?
 
-## Phase 3: Deep Analysis 🔬
+## Phase 4: Deep Analysis 🔬
 
 ### Step-by-Step Workflow Analysis
 I'll think through the entire process:
@@ -80,7 +154,7 @@ Ways to make the command exceptional:
 - **User Experience**: How to make it delightful to use?
 - **Robustness**: How to handle edge cases gracefully?
 
-## Phase 4: Challenge Identification 🚧
+## Phase 5: Challenge Identification 🚧
 
 ### Technical Challenges
 - Complex integrations
@@ -106,7 +180,21 @@ Ways to make the command exceptional:
 - Concurrent usage
 - Resource limitations
 
-## Phase 5: Ambiguity Resolution 🔍
+## Phase 6: Ambiguity Resolution 🔍
+
+### Process-Specific Ambiguities
+When using shared processes, also resolve:
+- "The shared process does X, but you mentioned Y. Did you mean:
+  a) Replace X with Y entirely
+  b) Do X first, then Y
+  c) Choose between X and Y based on context
+  d) Something else?"
+
+- "This process integrates with [tool]. Will your command:
+  a) Always use this tool
+  b) Sometimes use it (what conditions?)
+  c) Use a different tool
+  d) Make it optional?"
 
 I'll identify and resolve all unclear aspects:
 
@@ -123,7 +211,13 @@ For each assumption made:
 - Ask for confirmation
 - Document alternatives
 
-## Phase 6: Pattern Recognition 🔄
+## Phase 7: Pattern Recognition 🔄
+
+### Process Composition Patterns
+- Identify how multiple processes can work together
+- Find common process chains (e.g., test → commit → push)
+- Recognize where process handoffs occur
+- Spot opportunities for process orchestration
 
 ### Automation Opportunities
 - Repetitive sequences that can be scripted
@@ -143,7 +237,33 @@ For each assumption made:
 - Short-circuit evaluations
 - Batch operations
 
-## Phase 7: Solution Design 📐
+## Phase 8: Solution Design 📐
+
+### Process Integration Design
+```yaml
+name: [command-name]
+description: [clear, concise description]
+author: [your name]
+version: 1.0.0
+
+# Process Dependencies
+processes:
+  - name: version-control/commit-standards
+    version: ">=1.0.0"
+    usage: "For creating standardized commits"
+    overrides:
+      - feature: "commit-message-format"
+        condition: "when flag --custom-format is used"
+        implementation: "Use user-provided format"
+  
+  - name: testing/tdd-pattern
+    version: ">=1.0.0"
+    usage: "For test-driven implementation"
+    extensions:
+      - feature: "parallel-test-execution"
+        condition: "when flag --parallel is used"
+        implementation: "Run tests in parallel using pytest-xdist"
+```
 
 ### Command Structure
 ```yaml
@@ -174,7 +294,22 @@ version: 1.0.0
 - Error explanations
 - Success confirmations
 
-## Phase 8: Validation & Approval ✅
+## Phase 9: Validation & Approval ✅
+
+### Process Usage Summary
+Show which shared processes will be used:
+
+**Shared Processes:**
+- ✅ `version-control/commit-standards` - For commit creation
+- ✅ `testing/tdd-pattern` - For test-driven development
+- ❌ `code-review/analysis` - Not needed for this command
+
+**Process Modifications:**
+- `commit-standards`: Added custom format option
+- `tdd-pattern`: Extended with parallel execution
+
+**Custom Implementations:**
+- [Feature X]: Implemented locally (no suitable shared process)
 
 ### Present the Complete Plan
 
@@ -213,7 +348,43 @@ I'll show you:
 2. Refine specific aspects (please specify)
 3. Start over with a different approach"
 
-## Phase 9: Command Creation 🛠️
+## Phase 10: Command Creation 🛠️
+
+### Process Reference Generation
+For each used process, generate proper references:
+
+```markdown
+## Process: Commit Standards
+This command uses the shared commit standards process.
+See: ~/.claude/processes/version-control/commit-standards.md
+
+Overrides:
+- When --custom-format flag is used, the command will accept a custom format string
+  instead of using conventional commits format.
+
+## Process: TDD Pattern  
+This command follows the TDD pattern for implementation.
+See: ~/.claude/processes/testing/tdd-pattern.md
+
+Extensions:
+- When --parallel flag is used, tests will run in parallel using pytest-xdist
+```
+
+### Conditional Gate Implementation
+For process extensions with conditions:
+
+```markdown
+# Check if using extended feature
+if [[ "$1" == "--parallel" ]]; then
+    echo "Using parallel test execution (command-specific extension)"
+    # Command-specific parallel implementation
+    pytest -n auto
+else
+    # Use standard TDD process
+    !load ~/.claude/processes/testing/tdd-pattern.md
+    # Follow standard TDD workflow
+fi
+```
 
 ### Directory Detection
 ```bash
@@ -249,20 +420,62 @@ When invoked, I will:
 
 1. **Start with goal discovery**: "I'll help you create a custom slash command. What would you like your new command to accomplish?"
 
-2. **Gather requirements systematically**, asking clarifying questions at each step
+2. **Detect existing processes** that match your described functionality:
+   - Search ~/.claude/processes for relevant modules
+   - Present matches with relevance scores
+   - Get approval to use shared processes
 
-3. **Think deeply** about the problem, showing my analysis process
+3. **Resolve process conflicts** through interactive dialogue:
+   - Present each difference clearly
+   - Offer resolution options
+   - Document decisions
 
-4. **Identify challenges** and propose solutions
+4. **Identify missing features** and determine how to add them:
+   - To shared process (with or without conditions)
+   - As command-specific extensions
+   - As separate implementations
 
-5. **Resolve ambiguities** through targeted questions
+5. **Gather remaining requirements** not covered by shared processes
 
-6. **Recognize patterns** and suggest optimizations
+6. **Think deeply** about the complete solution
 
-7. **Design a complete solution** with all details
+7. **Identify challenges** and propose solutions
 
-8. **Present for approval** with clear summary
+8. **Resolve all ambiguities** through targeted questions
 
-9. **Create the command** upon approval or iterate based on feedback
+9. **Recognize patterns** and suggest optimizations
 
-Remember: The goal is to create commands that not only meet requirements but exceed expectations through thoughtful design and comprehensive implementation.
+10. **Design solution** with process integration
+
+11. **Present for approval** with process usage summary
+
+12. **Create the command** with proper process references and conditional gates
+
+Remember: The goal is to create commands that:
+- Leverage existing processes for consistency and reliability
+- Only create custom logic when truly unique functionality is needed  
+- Resolve conflicts thoughtfully to maintain system coherence
+- Exceed expectations through thoughtful integration and design
+- Document process usage clearly for future maintenance
+
+## Process Detection Keywords
+
+Common keywords that trigger process detection:
+
+### Version Control
+- commit, git, branch, merge, push, pull, version, changes
+
+### Testing  
+- test, TDD, BDD, coverage, unit, integration, pytest, jest
+
+### Issue Tracking
+- issue, ticket, bug, feature, milestone, project, github
+
+### Code Review
+- review, analyze, quality, standards, lint, format
+
+### Security
+- sanitize, redact, security, sensitive, credentials, secrets
+
+### Development Patterns
+- implement, develop, create, build, design, architecture
