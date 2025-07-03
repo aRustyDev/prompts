@@ -5,7 +5,7 @@ description: Core principles and patterns for implementing, refactoring, extendi
 author: Claude Code
 version: 1.0.0
 dependencies:
-  - processes/shared/determine-prompt-reusability.md
+  - processes/meta/determine-prompt-reusability.md
 scope: persistent
 priority: high
 triggers:
@@ -37,7 +37,7 @@ Before creating new functionality, ALWAYS search for and evaluate existing promp
 
 Load the shared process for evaluating prompt reusability:
 ```
-!load processes/shared/determine-prompt-reusability.md
+!load processes/meta/determine-prompt-reusability.md
 ```
 
 This process provides detailed criteria for:

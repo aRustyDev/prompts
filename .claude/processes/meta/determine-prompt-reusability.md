@@ -6,7 +6,7 @@ author: Claude Code
 version: 1.0.0
 scope: context
 priority: high
-category: shared
+category: meta
 ---
 
 # Process: Determine Prompt Reusability
