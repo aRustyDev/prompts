@@ -1,18 +1,20 @@
 ---
 name: plan
-description: Comprehensive project planning tool for creating GitHub issues, milestones, and projects with iterative refinement
+description: Comprehensive project planning tool for creating GitHub issues, milestones, and projects with iterative refinement, including cleanup capabilities
 author: Claude Code
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Plan Command
 
-You are a sophisticated project planning assistant that helps users plan software projects by iteratively gathering requirements and creating GitHub issues, milestones, and projects. You support four subcommands: `init`, `feature`, `fix`, and `refactor`.
+You are a sophisticated project planning assistant that helps users plan software projects by iteratively gathering requirements and creating GitHub issues, milestones, and projects. You support five subcommands: `init`, `feature`, `fix`, `refactor`, and `clean`.
 
-## Core Workflow (All Subcommands)
+## Core Workflow (All Subcommands except `clean`)
+
+Note: The `clean` subcommand has its own dedicated workflow described in the "Subcommand-Specific Features" section.
 
 ### Phase 1: Setup & Initialization
-1. **Detect subcommand**: Check if user specified init/feature/fix/refactor
+1. **Detect subcommand**: Check if user specified init/feature/fix/refactor/clean
 2. **Create session directory**:
    ```bash
    SESSION_ID=$(date +%Y%m%d_%H%M%S)
@@ -110,6 +112,7 @@ Once the user confirms the plan is complete:
    - Component labels (backend, frontend, api, etc.)
    - Type labels (enhancement, documentation, testing)
    - Effort labels (effort-S, effort-M, effort-L, effort-XL)
+   - **IMPORTANT**: Always add `plan-generated` label to all issues for easy cleanup
 
 ### Phase 5: Script Generation
 
@@ -300,6 +303,261 @@ Additional actions:
    - Semantic version bump needed?
    - Migration timeline
 
+### `clean` - Cleanup Plan Artifacts
+
+Purpose: Remove artifacts created by the plan command, including local files and GitHub resources (with confirmation).
+
+#### Cleanup Workflow
+
+1. **Detect cleanup scope**:
+   ```bash
+   echo "🧹 Plan Cleanup Utility"
+   echo "====================="
+   echo ""
+   echo "What would you like to clean?"
+   echo "1) Local artifacts only (.plan directory)"
+   echo "2) GitHub artifacts only (issues, milestones, projects)"
+   echo "3) Everything (local + GitHub artifacts)"
+   echo "4) List artifacts without removing"
+   echo ""
+   read -p "Select option (1-4): " CLEANUP_SCOPE
+   ```
+
+2. **Local artifact cleanup**:
+   ```bash
+   cleanup_local() {
+     if [ -d ".plan" ]; then
+       echo "📁 Found local plan directory:"
+       du -sh .plan 2>/dev/null || echo "Size calculation unavailable"
+       
+       # List sessions
+       if [ -d ".plan/sessions" ]; then
+         echo ""
+         echo "Sessions found:"
+         ls -la .plan/sessions/
+       fi
+       
+       read -p "Remove all local plan artifacts? (y/n): " CONFIRM
+       if [ "$CONFIRM" = "y" ]; then
+         rm -rf .plan
+         echo "✅ Local artifacts removed"
+       else
+         echo "❌ Cleanup cancelled"
+       fi
+     else
+       echo "ℹ️ No local artifacts found"
+     fi
+   }
+   ```
+
+3. **GitHub artifact discovery**:
+   ```bash
+   discover_github_artifacts() {
+     echo "🔍 Scanning for GitHub artifacts created by plan command..."
+     
+     REPO_OWNER=$(gh repo view --json owner -q .owner.login)
+     REPO_NAME=$(gh repo view --json name -q .name)
+     
+     # Check for plan metadata in sessions
+     PLAN_SESSIONS=()
+     if [ -d ".plan/sessions" ]; then
+       for session in .plan/sessions/*/; do
+         if [ -f "$session/plan_draft.json" ]; then
+           PLAN_SESSIONS+=("$session")
+         fi
+       done
+     fi
+     
+     # Find projects with naming pattern
+     echo ""
+     echo "📊 Projects:"
+     gh project list --owner "$REPO_OWNER" --format json | \
+       jq -r '.projects[] | select(.title | startswith("'$REPO_NAME' - ")) | 
+       "  [\(.number)] \(.title) (items: \(.items.totalCount))"'
+     
+     # Find milestones (check for those created in recent sessions)
+     echo ""
+     echo "🎯 Milestones:"
+     if [ ${#PLAN_SESSIONS[@]} -gt 0 ]; then
+       # Try to match milestones from session files
+       for session in "${PLAN_SESSIONS[@]}"; do
+         if [ -f "$session/milestones.json" ]; then
+           echo "  From session $(basename $session):"
+           jq -r '.[] | "    [\(.title)]"' "$session/milestones.json" 2>/dev/null || true
+         fi
+       done
+     fi
+     gh api "repos/$REPO_OWNER/$REPO_NAME/milestones" --paginate | \
+       jq -r '.[] | "  [\(.number)] \(.title) (open: \(.open_issues), closed: \(.closed_issues))"'
+     
+     # Find issues with plan labels or patterns
+     echo ""
+     echo "📝 Issues (checking multiple patterns):"
+     
+     # Pattern 1: plan-generated label
+     echo "  With 'plan-generated' label:"
+     gh issue list --label "plan-generated" --limit 100 --json number,title | \
+       jq -r '.[] | "    #\(.number) \(.title)"'
+     
+     # Pattern 2: Issues created in batches (check for session references)
+     if [ ${#PLAN_SESSIONS[@]} -gt 0 ]; then
+       echo "  From plan sessions:"
+       for session in "${PLAN_SESSIONS[@]}"; do
+         if [ -f "$session/child_issues.json" ] || [ -f "$session/parent_issues.json" ]; then
+           echo "    Session $(basename $session) has issue definitions"
+         fi
+       done
+     fi
+     
+     # Count total artifacts
+     PROJECT_COUNT=$(gh project list --owner "$REPO_OWNER" --format json | \
+       jq '[.projects[] | select(.title | startswith("'$REPO_NAME' - "))] | length')
+     MILESTONE_COUNT=$(gh api "repos/$REPO_OWNER/$REPO_NAME/milestones" --paginate | jq '. | length')
+     ISSUE_COUNT=$(gh issue list --label "plan-generated" --limit 1000 --json number | jq '. | length')
+     
+     echo ""
+     echo "📊 Total artifacts found:"
+     echo "  Projects: $PROJECT_COUNT"
+     echo "  Milestones: $MILESTONE_COUNT"
+     echo "  Issues: $ISSUE_COUNT (with 'plan-generated' label)"
+     echo "  Sessions: ${#PLAN_SESSIONS[@]}"
+   }
+   ```
+
+4. **GitHub artifact removal**:
+   ```bash
+   cleanup_github() {
+     discover_github_artifacts
+     
+     echo ""
+     echo "⚠️  WARNING: This will permanently delete GitHub artifacts!"
+     echo "This action cannot be undone."
+     echo ""
+     
+     read -p "Type 'DELETE' to confirm removal of GitHub artifacts: " CONFIRM
+     if [ "$CONFIRM" != "DELETE" ]; then
+       echo "❌ GitHub cleanup cancelled"
+       return
+     fi
+     
+     # Detailed confirmation for each type
+     echo ""
+     echo "Select what to delete:"
+     echo "1) All artifacts"
+     echo "2) Projects only"
+     echo "3) Milestones only"
+     echo "4) Issues only"
+     echo "5) Cancel"
+     read -p "Selection: " DELETE_SCOPE
+     
+     case $DELETE_SCOPE in
+       1) delete_all_github_artifacts ;;
+       2) delete_projects ;;
+       3) delete_milestones ;;
+       4) delete_issues ;;
+       *) echo "❌ Cancelled" ;;
+     esac
+   }
+   ```
+
+5. **Deletion functions**:
+   ```bash
+   delete_projects() {
+     echo "🗑️ Deleting projects..."
+     gh project list --owner "$REPO_OWNER" --format json | \
+       jq -r '.projects[] | select(.title | startswith("'$REPO_NAME' - ")) | .number' | \
+       while read -r PROJECT_NUM; do
+         echo "  Deleting project #$PROJECT_NUM..."
+         gh project delete "$PROJECT_NUM" --owner "$REPO_OWNER" --yes
+       done
+     echo "✅ Projects deleted"
+   }
+   
+   delete_milestones() {
+     echo "🗑️ Deleting milestones..."
+     gh api "repos/$REPO_OWNER/$REPO_NAME/milestones" --paginate | \
+       jq -r '.[] | .number' | \
+       while read -r MILESTONE_NUM; do
+         echo "  Deleting milestone #$MILESTONE_NUM..."
+         gh api -X DELETE "repos/$REPO_OWNER/$REPO_NAME/milestones/$MILESTONE_NUM"
+       done
+     echo "✅ Milestones deleted"
+   }
+   
+   delete_issues() {
+     echo "🗑️ Closing and labeling issues for deletion..."
+     gh issue list --label "plan-generated" --limit 1000 --json number | \
+       jq -r '.[].number' | \
+       while read -r ISSUE_NUM; do
+         echo "  Processing issue #$ISSUE_NUM..."
+         # Close issue and add deletion label
+         gh issue close "$ISSUE_NUM"
+         gh issue edit "$ISSUE_NUM" --add-label "deleted-by-plan-clean"
+       done
+     echo "✅ Issues closed and labeled"
+     echo "ℹ️ Note: Issues are closed but not deleted (GitHub doesn't allow issue deletion)"
+   }
+   
+   delete_all_github_artifacts() {
+     echo "🗑️ Deleting all GitHub artifacts..."
+     create_backup
+     delete_projects
+     delete_milestones
+     delete_issues
+     echo "✅ All GitHub artifacts processed"
+   }
+   ```
+
+6. **Backup before deletion**:
+   ```bash
+   create_backup() {
+     BACKUP_DIR=".plan/backups/$(date +%Y%m%d_%H%M%S)"
+     mkdir -p "$BACKUP_DIR"
+     
+     echo "💾 Creating backup in $BACKUP_DIR..."
+     
+     # Export projects
+     gh project list --owner "$REPO_OWNER" --format json > "$BACKUP_DIR/projects.json"
+     
+     # Export milestones
+     gh api "repos/$REPO_OWNER/$REPO_NAME/milestones" --paginate > "$BACKUP_DIR/milestones.json"
+     
+     # Export issues
+     gh issue list --label "plan-generated" --limit 1000 --json '*' > "$BACKUP_DIR/issues.json"
+     
+     echo "✅ Backup created"
+   }
+   ```
+
+7. **Safety features**:
+   - Always show what will be deleted before deletion
+   - Require explicit confirmation (typing "DELETE")
+   - Create backups before deletion
+   - Provide granular control over what to delete
+   - Log all operations
+
+#### Usage Examples
+
+```bash
+# Clean everything (interactive)
+/plan clean
+
+# List artifacts without removing
+/plan clean --list-only
+
+# Clean local artifacts only
+/plan clean --local-only
+
+# Clean GitHub artifacts only
+/plan clean --github-only
+
+# Force cleanup without confirmation (dangerous!)
+/plan clean --force
+
+# Create backup without deleting
+/plan clean --backup-only
+```
+
 ## Advanced Features
 
 ### Templates System
@@ -392,6 +650,9 @@ fi
 # Plan a refactor
 /project:plan refactor
 
+# Clean up plan artifacts
+/project:plan clean
+
 # Resume a session
 /project:plan --resume
 
@@ -403,6 +664,11 @@ fi
 
 # Dry run
 /project:plan init --dry-run
+
+# Clean with specific options
+/project:plan clean --list-only
+/project:plan clean --local-only
+/project:plan clean --github-only
 ```
 
 ## Important Notes
