@@ -120,6 +120,14 @@ contexts:
       - processes/security/*
       - guides/tools/sanitization/*
     scope: context
+
+  auditing:
+    triggers: ["audit", "analyze repository", "find duplicates", "optimization", "dead context", "repository health"]
+    loads:
+      - processes/auditing/*
+      - workflows/repository-audit.yaml
+      - roles/base/prompt-auditor.yaml
+    scope: context
 ```
 
 ### Tool-Specific Loading

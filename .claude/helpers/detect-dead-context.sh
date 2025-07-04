@@ -178,7 +178,7 @@ find_deprecated_patterns() {
     
     # Define deprecated patterns
     declare -A patterns=(
-        ["::set-output"]="Use \$GITHUB_OUTPUT instead (GitHub Actions)"
+        ["set-output"]="Use \$GITHUB_OUTPUT instead (GitHub Actions)"
         ["master branch"]="Use 'main' branch"
         ["blacklist/whitelist"]="Use blocklist/allowlist"
         ["slave/master"]="Use alternative terminology"
