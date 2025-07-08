@@ -1,13 +1,13 @@
 ---
 name: report
-description: Create GitHub issues for bugs and feature requests in the prompts repository
+description: Create GitHub issues for bugs, features, and improvements across multiple repositories
 author: Claude
-version: 1.0.0
+version: 2.0.0
 ---
 
 # Command: /report
 
-Create GitHub issues to report bugs or request features for the slash-command system in https://github.com/aRustyDev/prompts.
+Create GitHub issues to report bugs, request features, or suggest improvements across your repositories. Supports multiple repositories with customizable templates. Issues are previewed before submission for review and editing.
 
 ## Usage
 ```
@@ -15,8 +15,9 @@ Create GitHub issues to report bugs or request features for the slash-command sy
 ```
 
 ## Subcommands
-- `bug` - Report something broken or unexpected about Claude's behavior with prompts
-- `feature` - Request new slash-commands, concepts, roles, guides, patterns, etc.
+- `bug` - Report something broken or unexpected
+- `feature` - Request new functionality or capability
+- `improvement` - Suggest enhancements to existing functionality
 
 ## Process Dependencies
 ```yaml
@@ -28,7 +29,47 @@ processes:
   - name: data-sanitization
     version: ">=1.0.0" 
     usage: "Sanitize conversation context before including in issues"
+    
+  - name: ui/interactive-selection
+    version: ">=1.0.0"
+    usage: "Repository selection and preview formatting"
+    
+  - name: meta/context-analysis
+    version: ">=1.0.0"
+    usage: "Enhanced context gathering from various sources"
+    conditional: true
+    condition: "Used when --enhanced-context flag is set"
 ```
+
+## Repository Selection
+
+When any subcommand is invoked, Claude will:
+
+1. **Load Repository Configuration**
+   ```bash
+   # Load from config/repositories.yaml
+   REPOS=$(yq eval '.core + .custom' ~/.claude/config/repositories.yaml)
+   ```
+
+2. **Interactive Repository Selection**
+   ```
+   Which repository is this issue for?
+   
+   Core Repositories:
+   1) prompts - Slash command system and Claude configuration
+   2) dotfiles - Personal dotfiles and system configuration  
+   3) pre-commit-hooks - Custom pre-commit hooks collection
+   
+   Custom Repositories:
+   4) my-project - My awesome project
+   
+   Select repository [1-4]: 
+   ```
+
+3. **Template Resolution**
+   - Core repos use `templates/issues-{repo}/` templates
+   - Custom repos use `templates/issues-custom/` templates
+   - Falls back to generic templates if repo-specific not found
 
 ## Subcommand: bug
 
@@ -43,6 +84,9 @@ Report issues with Claude's behavior when using slash-commands.
 - `--quick` - Skip interactive prompts, use defaults where possible
 - `--type` - Specify bug type (execution-error, unexpected-behavior, missing-behavior, performance, documentation, logic-order, other)
 - `--command` - Specify the command that exhibited the bug
+- `--no-preview` - Skip issue preview and submit directly (use with caution)
+- `--enhanced-context` - Gather additional diagnostic data (logs, system info, etc.)
+- `--repo` - Specify repository directly (skips interactive selection)
 
 ### Interactive Mode Workflow
 
@@ -69,7 +113,11 @@ Report issues with Claude's behavior when using slash-commands.
    ```
 
 3. **Information Gathering**
-   Based on bug type, load appropriate template from `templates/issues/bugs/`:
+   Based on bug type, load appropriate template:
+   - First check repo-specific: `templates/issues-{repo}/{bug-type}.md`
+   - Fallback to generic: `templates/issues/bugs/{bug-type}.md`
+   
+   Template types:
    - `execution-error.md`
    - `unexpected-behavior.md`
    - `missing-behavior.md`
@@ -78,22 +126,96 @@ Report issues with Claude's behavior when using slash-commands.
    - `logic-order.md`
    - `other-bug.md`
 
-4. **Context Sanitization**
+4. **Enhanced Context Gathering** (if --enhanced-context)
    ```bash
-   # Use data-sanitization process
-   SANITIZED_CONTEXT=$(echo "$CONVERSATION_CONTEXT" | \
-     ~/.claude/processes/data-sanitization.sh --remove-pii --truncate 1000)
+   # Gather diagnostic data
+   gather_enhanced_context() {
+     echo "## Additional Context"
+     
+     # Last command output
+     if [ -f "$LAST_COMMAND_OUTPUT" ]; then
+       echo "### Last Command Output"
+       tail -n 50 "$LAST_COMMAND_OUTPUT"
+     fi
+     
+     # Check common log locations
+     for log_dir in ~/logs /tmp ./.claude/logs ./logs; do
+       if [ -d "$log_dir" ]; then
+         echo "### Recent Logs from $log_dir"
+         find "$log_dir" -name "*.log" -mtime -1 -exec tail -n 20 {} \;
+       fi
+     done
+     
+     # Git status and recent changes
+     echo "### Git Status"
+     git status --short
+     echo "### Recent Git Changes"
+     git diff --stat HEAD~5..HEAD
+     
+     # System information
+     echo "### System Info"
+     uname -a
+     echo "Memory: $(free -h | grep Mem | awk '{print $3"/"$2}')"
+     echo "Disk: $(df -h . | tail -1 | awk '{print $3"/"$2" ("$5" used)"}')"
+     
+     # Recent shell history (last 10 relevant commands)
+     echo "### Recent Commands"
+     history | grep -E "(${CURRENT_COMMAND}|error|fail)" | tail -10
+   }
    ```
 
-5. **Issue Creation**
+5. **Context Sanitization**
    ```bash
+   # Sanitize all gathered context
+   FULL_CONTEXT="$CONVERSATION_CONTEXT"
+   if [[ "$ENHANCED_CONTEXT" == "true" ]]; then
+     FULL_CONTEXT="$FULL_CONTEXT\n\n$(gather_enhanced_context)"
+   fi
+   
+   SANITIZED_CONTEXT=$(echo "$FULL_CONTEXT" | \
+     ~/.claude/processes/data-sanitization.sh --remove-pii --truncate 2000)
+   ```
+
+5. **Issue Preview & Submission**
+   ```bash
+   # Show preview unless --no-preview flag is used
+   if [[ "$NO_PREVIEW" != "true" ]]; then
+     show_issue_preview "$ISSUE_TITLE" "$ISSUE_BODY" "bug,$BUG_TYPE_LABEL"
+     
+     # Get user confirmation
+     read -p "Choose action: [S]ubmit, [E]dit, [C]ancel, [D]ry-run: " ACTION
+     
+     case "$ACTION" in
+       [Ss]* )
+         # Proceed to create issue
+         ;;
+       [Ee]* )
+         # Allow editing (implementation depends on environment)
+         ISSUE_BODY=$(edit_in_editor "$ISSUE_BODY")
+         # Recursively show preview again
+         ;;
+       [Dd]* )
+         # Show what would be submitted without creating
+         echo "Dry run - issue would be created with:"
+         echo "Repo: $REPO_OWNER/$REPO_NAME"
+         echo "Title: $ISSUE_TITLE"
+         echo "Labels: bug,$BUG_TYPE_LABEL"
+         exit 0
+         ;;
+       * )
+         echo "Cancelled."
+         exit 0
+         ;;
+     esac
+   fi
+   
    # Create issue using gh CLI
    gh issue create \
-     --repo "aRustyDev/prompts" \
+     --repo "$REPO_OWNER/$REPO_NAME" \
      --title "$ISSUE_TITLE" \
      --body "$ISSUE_BODY" \
      --label "bug,$BUG_TYPE_LABEL" \
-     --assignee "@me"
+     --assignee "$REPO_ASSIGNEE"
    ```
 
 ### Quick Mode Workflow
@@ -121,6 +243,7 @@ Request new functionality for the slash-command system.
 - `--quick` - Skip interactive prompts where possible
 - `--type` - Feature type (command, pattern, role, guide, process, workflow, helper, template, meta, other)
 - `--title` - Feature title for quick mode
+- `--no-preview` - Skip issue preview and submit directly (use with caution)
 
 ### Interactive Mode Workflow
 
@@ -169,8 +292,40 @@ Request new functionality for the slash-command system.
    fi
    ```
 
-5. **Issue Creation**
+5. **Issue Preview & Submission**
    ```bash
+   # Show preview unless --no-preview flag is used
+   if [[ "$NO_PREVIEW" != "true" ]]; then
+     show_issue_preview "$FEATURE_TITLE" "$ISSUE_BODY" "$LABELS"
+     
+     # Get user confirmation
+     read -p "Choose action: [S]ubmit, [E]dit, [C]ancel, [D]ry-run: " ACTION
+     
+     case "$ACTION" in
+       [Ss]* )
+         # Proceed to create issue
+         ;;
+       [Ee]* )
+         # Allow editing
+         ISSUE_BODY=$(edit_in_editor "$ISSUE_BODY")
+         # Recursively show preview again
+         ;;
+       [Dd]* )
+         # Show what would be submitted without creating
+         echo "Dry run - issue would be created with:"
+         echo "Repo: $REPO_OWNER/$REPO_NAME"
+         echo "Title: $FEATURE_TITLE"
+         echo "Labels: $LABELS"
+         exit 0
+         ;;
+       * )
+         echo "Cancelled."
+         exit 0
+         ;;
+     esac
+   fi
+   
+   # Create issue using gh CLI
    gh issue create \
      --repo "aRustyDev/prompts" \
      --title "$FEATURE_TITLE" \
@@ -206,6 +361,63 @@ $TYPE_DESCRIPTION
 EOF
 ```
 
+## Subcommand: improvement
+
+Suggest improvements to existing functionality.
+
+### Usage
+```
+/report improvement [--quick] [--area <improvement-area>] [--title <title>]
+```
+
+### Options
+- `--quick` - Skip interactive prompts where possible
+- `--area` - Improvement area (performance, usability, documentation, testing, refactoring, other)
+- `--title` - Improvement title for quick mode
+- `--no-preview` - Skip issue preview and submit directly
+- `--enhanced-context` - Include performance metrics and usage data
+- `--repo` - Specify repository directly
+
+### Interactive Mode Workflow
+
+1. **Improvement Area Selection**
+   ```
+   What area does this improvement target?
+   1) performance - Speed, efficiency, resource usage
+   2) usability - User experience, interface, workflow
+   3) documentation - Clarity, completeness, examples
+   4) testing - Test coverage, quality, automation
+   5) refactoring - Code structure, maintainability
+   6) other - Other improvements
+   ```
+
+2. **Current State Analysis**
+   - Describe current behavior/state
+   - Identify specific pain points
+   - Quantify impact if possible
+
+3. **Proposed Improvement**
+   - Detailed description of changes
+   - Expected benefits
+   - Implementation approach
+   - Potential risks or trade-offs
+
+4. **Template Loading**
+   Load template from:
+   - Repo-specific: `templates/issues-{repo}/improvement-{area}.md`
+   - Generic: `templates/issues/improvements/{area}.md`
+
+5. **Issue Creation**
+   ```bash
+   # Create improvement issue
+   gh issue create \
+     --repo "$REPO_OWNER/$REPO_NAME" \
+     --title "$IMPROVEMENT_TITLE" \
+     --body "$ISSUE_BODY" \
+     --label "improvement,$AREA_LABEL" \
+     --assignee "$REPO_ASSIGNEE"
+   ```
+
 ## Implementation Details
 
 ### Environment Detection
@@ -235,6 +447,43 @@ capture_context() {
   else
     echo "[No conversation context available]"
   fi
+}
+```
+
+### Issue Preview Display
+```bash
+# Function to display issue preview
+show_issue_preview() {
+  local TITLE="$1"
+  local BODY="$2"
+  local LABELS="$3"
+  
+  # Draw preview box using box-drawing characters
+  echo "╭─────────────────────────────────────────────╮"
+  echo "│ GitHub Issue Preview                        │"
+  echo "├─────────────────────────────────────────────┤"
+  echo "│ Repository: $REPO_OWNER/$REPO_NAME          │"
+  echo "│ Type: ${LABELS}                             │"
+  echo "├─────────────────────────────────────────────┤"
+  echo "│ Title: ${TITLE}                             │"
+  echo "├─────────────────────────────────────────────┤"
+  echo "│ Body:                                       │"
+  echo "╰─────────────────────────────────────────────╯"
+  echo ""
+  echo "$BODY"
+  echo ""
+  echo "─────────────────────────────────────────────"
+}
+
+# Function to edit in user's preferred editor
+edit_in_editor() {
+  local CONTENT="$1"
+  local TMPFILE=$(mktemp)
+  
+  echo "$CONTENT" > "$TMPFILE"
+  ${EDITOR:-vi} "$TMPFILE"
+  cat "$TMPFILE"
+  rm "$TMPFILE"
 }
 ```
 
@@ -277,7 +526,9 @@ When this command is invoked, Claude will:
 2. **Gather Context**: Automatically collect environment and conversation data
 3. **Interactive Flow**: Guide through appropriate template selection
 4. **Populate Template**: Fill in all variables with gathered information
-5. **Create Issue**: Use GitHub CLI to create the issue immediately
+5. **Preview Issue**: Display formatted preview (unless --no-preview is set)
+6. **Handle User Choice**: Submit, edit, cancel, or dry-run based on selection
+7. **Create Issue**: Use GitHub CLI to create the issue after approval
 
 ### Example Execution Flow
 
@@ -303,6 +554,23 @@ Claude: I'll use the unexpected behavior template. Please describe what unexpect
 
 [Claude guides through template completion]
 
+╭─────────────────────────────────────────────╮
+│ GitHub Issue Preview                        │
+├─────────────────────────────────────────────┤
+│ Repository: $REPO_OWNER/$REPO_NAME          │
+│ Type: bug, unexpected-behavior              │
+├─────────────────────────────────────────────┤
+│ Title: /cicd command produces wrong output  │
+├─────────────────────────────────────────────┤
+│ Body:                                       │
+╰─────────────────────────────────────────────╯
+
+[Issue body content displayed here...]
+
+─────────────────────────────────────────────
+
+Choose action: [S]ubmit, [E]dit, [C]ancel, [D]ry-run: s
+
 Creating issue on GitHub...
 ✅ Issue created: https://github.com/aRustyDev/prompts/issues/123
 ```
@@ -313,3 +581,30 @@ User: /report feature --quick --type command --title "Add /analyze command"
 Claude: Creating feature request for new command...
 ✅ Issue created: https://github.com/aRustyDev/prompts/issues/124
 ```
+
+## Changelog
+
+### Version 2.0.0
+- **Breaking Change**: Now prompts for repository selection (previously hardcoded to prompts repo)
+- **New Feature**: Multi-repository support with configurable repositories
+- **New Feature**: Added `improvement` subcommand for suggesting enhancements
+- **New Feature**: Enhanced context gathering with `--enhanced-context` flag
+- **New Feature**: Repository-specific templates (e.g., `templates/issues-prompts/`)
+- **New Feature**: Custom repository support via `config/repositories.yaml`
+- **Enhancement**: Added `--repo` flag to skip interactive repository selection
+- **Enhancement**: Improved template resolution with repo-specific fallback
+- **Enhancement**: Added diagnostic data collection (logs, git info, system metrics)
+- **Process Integration**: Added `meta/context-analysis` for enhanced context
+- **Configuration**: Added `.gitignore` for custom templates
+
+### Version 1.1.0
+- Added issue preview functionality before submission
+- Added `--no-preview` flag option
+- Added edit capability in preview mode
+- Added dry-run option
+
+### Version 1.0.0
+- Initial release with bug and feature reporting
+- GitHub CLI integration
+- Interactive and quick modes
+- Template-based issue creation

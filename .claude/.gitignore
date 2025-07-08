@@ -1,0 +1,11 @@
+# Ignore custom issue templates (non-core repositories)
+templates/issues-custom/
+
+# Ignore user-specific repository configurations
+config/repositories.yaml.local
+
+# Ignore logs and temporary files
+logs/
+*.log
+*.tmp
+.DS_Store
