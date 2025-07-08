@@ -93,11 +93,14 @@ define_ranking_criteria() {
       "weight": 0.05,
       "description": "Alignment with preferred work type order",
       "scoring": {
-        "bug_fix": 100,
+        "security_fix": 100,
+        "bug_fix": 95,
+        "cleanup": 90,
+        "pr_review": 85,
         "refactor": 80,
+        "documentation": 70,
         "enhancement": 60,
         "feature": 50,
-        "documentation": 40,
         "other": 20
       }
     }
@@ -127,6 +130,18 @@ define_ranking_criteria() {
       "overrides": {
         "deadline_urgency": 0.30,
         "priority": 0.25
+      }
+    },
+    "maintenance_first": {
+      "description": "Prioritize codebase health over features",
+      "overrides": {
+        "type_alignment": 0.25,
+        "priority": 0.20,
+        "momentum_impact": 0.15,
+        "effort_complexity": 0.15,
+        "deadline_urgency": 0.10,
+        "age_staleness": 0.10,
+        "context_relevance": 0.05
       }
     }
   }
@@ -305,12 +320,14 @@ score_by_type() {
     .labels as $labels |
     .type as $type |
     (
-      if $labels | any(. == "bug" or . == "error" or . == "fix") then 100
+      if $labels | any(. == "security" or . == "vulnerability" or . == "CVE") then 100
+      elif $labels | any(. == "bug" or . == "error" or . == "fix") then 95
+      elif $labels | any(. == "cleanup" or . == "tech-debt" or . == "maintenance") then 90
+      elif $type == "pr" then 85  # PRs need review
       elif $labels | any(. == "refactor" or . == "technical-debt") then 80
+      elif $labels | any(. == "documentation" or . == "docs") then 70
       elif $labels | any(. == "enhancement") then 60
       elif $labels | any(. == "feature") then 50
-      elif $labels | any(. == "documentation" or . == "docs") then 40
-      elif $type == "pr" then 90  # PRs get high priority
       else 20
       end
     ) as $score |
