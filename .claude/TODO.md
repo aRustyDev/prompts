@@ -107,3 +107,10 @@
 
 ## 📝 NEW TODO ITEMS
 <!-- Add new TODO items below this line -->
+
+- Add logic for creating issue templates in a repo
+- Add intermediate templates for creating issues/projects/milestones in GitHub/GitLab/BitBucket
+  - needs: title, description, labels, assignees (default @me), milestone, project
+- Add logic for initializing a new project
+  - .env: repoName, vaultAddr
+- Add support for `op` cli in all
