@@ -9,6 +9,7 @@ conflicts: []
 dependencies:
   - analysis.md
   - _core.md
+  - templates/structure-examples.md
 priority: high
 ---
 
@@ -148,98 +149,40 @@ REPO_NAME=$(gh repo view --json name -q .name)
 
 ### Step 2: Create Script Files
 
-#### labels.json
-```json
-[
-  {"name": "plan-generated", "color": "0E8A16", "description": "Created by plan command"},
-  {"name": "p0-critical", "color": "B60205", "description": "Immediate action required"},
-  {"name": "p1-high", "color": "D93F0B", "description": "High priority"},
-  // ... all labels
-]
-```
+Generate standardized JSON files for GitHub API:
 
-#### milestones.json
-```json
-[
-  {
-    "title": "Milestone Title",
-    "description": "Milestone description",
-    "due_on": "2024-12-31T23:59:59Z"
-  }
-]
-```
+**File Structures**: See `templates/structure-examples.md` for:
+- labels.json - Label definitions with colors
+- milestones.json - Milestone metadata
+- issues.json - Issue details with references
+- projects.json - Project board configuration
 
-#### issues.json
-```json
-[
-  {
-    "title": "Issue Title",
-    "body": "Issue description with markdown",
-    "labels": ["plan-generated", "enhancement", "p1-high"],
-    "milestone": 1,
-    "assignees": []
-  }
-]
-```
-
-#### projects.json
-```json
-[
-  {
-    "name": "Project Name",
-    "body": "Project description",
-    "columns": ["To Do", "In Progress", "Review", "Done"]
-  }
-]
-```
+All files follow GitHub API v3 specifications.
 
 #### execute_plan.sh
-```bash
-#!/bin/bash
-set -euo pipefail
 
-# Colors for output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+Generate execution script for creating GitHub artifacts.
 
-echo "🚀 Executing GitHub plan..."
+**Implementation**: See `scripts/execute_plan.sh`
 
-# Create labels
-echo "🏷️  Creating labels..."
-# ... label creation logic
-
-# Create milestones
-echo "🎯 Creating milestones..."
-# ... milestone creation logic
-
-# Create issues
-echo "📝 Creating issues..."
-# ... issue creation logic
-
-# Create projects
-echo "📊 Creating projects..."
-# ... project creation logic
-
-echo "✅ Plan execution complete!"
-```
+The script handles:
+- Pre-execution validation
+- Sequential artifact creation
+- Error handling and rollback
+- Progress tracking
+- Post-execution summary
 
 ### Step 3: Save Session Data
-```bash
-# Copy all artifacts to session directory
-cp "$TEMP_DIR"/*.json "$SESSION_DIR/"
-cp "$TEMP_DIR"/*.sh "$SESSION_DIR/"
 
-# Create summary
-cat > "$SESSION_DIR/summary.md" << EOF
-# Planning Session Summary
-- Date: $(date)
-- Issues: $(jq length issues.json)
-- Milestones: $(jq length milestones.json)
-- Projects: $(jq length projects.json)
-- Labels: $(jq length labels.json)
-EOF
-```
+All generated artifacts are saved to the session directory:
+- JSON files (issues, milestones, projects, labels)
+- Execution script (execute_plan.sh)
+- Session summary with counts and metadata
+
+Session data enables:
+- Review before execution
+- Resume capability
+- Audit trail
 
 ## Integration
 

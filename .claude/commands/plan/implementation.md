@@ -9,6 +9,8 @@ conflicts: []
 dependencies:
   - design.md
   - _core.md
+  - scripts/execute_plan.sh
+  - scripts/error_handling.sh
 priority: high
 ---
 
@@ -24,145 +26,69 @@ This module manages the final phases where users review the generated plan and e
 
 ### Step 1: Generate Preview Report
 
-Create comprehensive preview showing what will be created:
+Create comprehensive preview showing what will be created.
 
-```bash
-echo "📋 Plan Preview"
-echo "=============="
-echo ""
-echo "📊 Projects: $(jq length projects.json)"
-jq -r '.[] | "  • \(.name)"' projects.json
-echo ""
-echo "🎯 Milestones: $(jq length milestones.json)"
-jq -r '.[] | "  • \(.title) (due: \(.due_on | split("T")[0]))"' milestones.json
-echo ""
-echo "📝 Issues: $(jq length issues.json)"
-echo "  By Priority:"
-echo "    • P0 (Critical): $(jq '[.[] | select(.labels | contains(["p0-critical"]))] | length' issues.json)"
-echo "    • P1 (High): $(jq '[.[] | select(.labels | contains(["p1-high"]))] | length' issues.json)"
-echo "    • P2 (Medium): $(jq '[.[] | select(.labels | contains(["p2-medium"]))] | length' issues.json)"
-echo "    • P3 (Low): $(jq '[.[] | select(.labels | contains(["p3-low"]))] | length' issues.json)"
-echo ""
-echo "🏷️  Labels: $(jq length labels.json)"
-```
+**Implementation**: Preview generation is integrated into the execution flow.
+
+Preview includes:
+- Project count and names
+- Milestone count with due dates
+- Issue count by priority
+- Label summary
+- Sample issues for review
 
 ### Step 2: Display Sample Issues
 
-Show a few example issues for review:
-
-```bash
-echo "📄 Sample Issues (first 3):"
-echo "=========================="
-jq -r '.[:3] | .[] | "
-Title: \(.title)
-Labels: \(.labels | join(", "))
-Priority: \(.labels[] | select(startswith("p")))
-Effort: \(.labels[] | select(startswith("effort")))
----"' issues.json
-```
+Show a few example issues for user review to ensure quality before execution.
 
 ### Step 3: Approval Prompt
 
-```bash
-echo ""
-echo "🤔 Review the plan above. Options:"
-echo "1) Execute - Create all items in GitHub"
-echo "2) Preview files - See generated JSON files"
-echo "3) Edit - Modify the plan"
-echo "4) Cancel - Exit without creating anything"
-echo ""
-read -p "Choose option (1-4): " choice
-```
+Present clear options for user action:
+1. Execute - Create all items in GitHub
+2. Preview files - See generated JSON files  
+3. Edit - Modify the plan
+4. Cancel - Exit without creating anything
 
 ### Step 4: Handle User Choice
 
 #### Option 1: Execute
 Proceed to Phase 7 execution
 
-#### Option 2: Preview Files
-```bash
-echo "📁 Generated files in: $TEMP_DIR"
-ls -la "$TEMP_DIR"
-echo ""
-echo "View a specific file? (or press Enter to continue)"
-read -p "Filename: " filename
-if [ -n "$filename" ]; then
-    cat "$TEMP_DIR/$filename" | jq .
-fi
-```
+#### Option Handling
 
-#### Option 3: Edit
-Allow modifications:
-- Edit issue titles/descriptions
-- Adjust priorities
-- Modify labels
-- Update milestones
-
-#### Option 4: Cancel
-Clean up and exit:
-```bash
-echo "❌ Plan cancelled. Cleaning up..."
-rm -rf "$TEMP_DIR"
-echo "✅ Cleanup complete. No changes made to GitHub."
-```
+- **Option 1 (Execute)**: Proceed to execution phase
+- **Option 2 (Preview)**: Display JSON files for inspection
+- **Option 3 (Edit)**: Allow plan modifications
+- **Option 4 (Cancel)**: Clean up and exit safely
 
 ## Phase 7: Execution & Tracking
 
 ### Step 1: Pre-execution Checks
 
-```bash
-# Verify GitHub CLI is authenticated
-if ! gh auth status &>/dev/null; then
-    echo "❌ Error: Not authenticated with GitHub CLI"
-    echo "Run: gh auth login"
-    exit 1
-fi
+Validate environment and permissions before execution.
 
-# Verify we're in a git repository
-if ! git rev-parse --git-dir &>/dev/null; then
-    echo "❌ Error: Not in a git repository"
-    exit 1
-fi
+**Implementation**: See `scripts/execute_plan.sh` - `pre_execution_checks()` function
 
-# Check repository access
-if ! gh repo view &>/dev/null; then
-    echo "❌ Error: Cannot access repository"
-    exit 1
-fi
-```
+Checks performed:
+- GitHub CLI authentication
+- Git repository presence
+- Repository access permissions
 
 ### Step 2: Execute Plan
 
-Run the generated script:
+Execute the plan using the dedicated execution script.
 
-```bash
-echo "🚀 Starting execution..."
-bash "$TEMP_DIR/execute_plan.sh"
-```
+**Implementation**: See `scripts/execute_plan.sh`
+
+Execution order:
+1. Create labels
+2. Create milestones
+3. Create issues (with milestone mapping)
+4. Create project board
 
 ### Step 3: Track Progress
 
-The execution script should:
-
-#### Create Labels
-```bash
-echo "🏷️  Creating labels..."
-for label in $(jq -r '.[] | @base64' labels.json); do
-    _jq() {
-        echo ${label} | base64 --decode | jq -r ${1}
-    }
-    
-    name=$(_jq '.name')
-    color=$(_jq '.color')
-    description=$(_jq '.description')
-    
-    if gh label create "$name" --color "$color" --description "$description" 2>/dev/null; then
-        echo "  ✅ Created label: $name"
-    else
-        echo "  ⏭️  Label exists: $name"
-    fi
-done
-```
+Progress tracking is built into the execution functions with real-time updates.
 
 #### Create Milestones
 ```bash
@@ -192,62 +118,18 @@ done
 ```
 
 #### Create Issues
-```bash
-echo "📝 Creating issues..."
-for issue in $(jq -r '.[] | @base64' issues.json); do
-    _jq() {
-        echo ${issue} | base64 --decode | jq -r ${1}
-    }
-    
-    title=$(_jq '.title')
-    body=$(_jq '.body')
-    labels=$(_jq '.labels | join(",")')
-    milestone_index=$(_jq '.milestone // 0')
-    
-    # Map milestone index to actual number
-    if [ "$milestone_index" -ne 0 ]; then
-        milestone_number=$(echo $milestone_map | jq -r ".\"$milestone_index\"")
-        milestone_flag="--milestone $milestone_number"
-    else
-        milestone_flag=""
-    fi
-    
-    number=$(gh issue create \
-        --title "$title" \
-        --body "$body" \
-        --label "$labels" \
-        $milestone_flag \
-        --repo $REPO_OWNER/$REPO_NAME | grep -o '[0-9]*$')
-    
-    echo "  ✅ Created issue: $title (#$number)"
-done
-```
+
+Issues are created with proper milestone mapping and label assignment.
+
+**Implementation**: See `scripts/execute_plan.sh` - `create_issues()` function
 
 ### Step 4: Post-execution
 
-```bash
-# Save execution results
-cat > "$SESSION_DIR/execution-results.md" << EOF
-# Execution Results
-- Date: $(date)
-- Repository: $REPO_OWNER/$REPO_NAME
-- Labels created: $(gh label list --json name | jq '. | length')
-- Milestones created: $(gh api repos/:owner/:repo/milestones | jq '. | length')
-- Issues created: $(gh issue list --label plan-generated --json number | jq '. | length')
-EOF
-
-# Show summary
-echo ""
-echo "✅ Plan execution complete!"
-echo ""
-echo "📊 Summary:"
-cat "$SESSION_DIR/execution-results.md"
-echo ""
-echo "🔗 View in GitHub:"
-echo "  • Issues: https://github.com/$REPO_OWNER/$REPO_NAME/issues?q=label:plan-generated"
-echo "  • Milestones: https://github.com/$REPO_OWNER/$REPO_NAME/milestones"
-echo "  • Projects: https://github.com/$REPO_OWNER/$REPO_NAME/projects"
-```
+After successful execution:
+- Save execution summary to session directory
+- Display creation counts
+- Provide GitHub links for viewing created items
+- Archive session for future reference
 
 ## Error Recovery
 
