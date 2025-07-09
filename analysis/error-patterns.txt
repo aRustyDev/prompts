@@ -1,0 +1,31 @@
+.claude/commands/report.md-         echo "Title: $ISSUE_TITLE"
+.claude/commands/report.md-         echo "Labels: bug,$BUG_TYPE_LABEL"
+.claude/commands/report.md:         exit 0
+.claude/commands/report.md-         ;;
+.claude/commands/report.md-       * )
+.claude/commands/report.md-         echo "Cancelled."
+.claude/commands/report.md:         exit 0
+.claude/commands/report.md-         ;;
+.claude/commands/report.md-     esac
+--
+.claude/commands/report.md-         echo "Title: $FEATURE_TITLE"
+.claude/commands/report.md-         echo "Labels: $LABELS"
+.claude/commands/report.md:         exit 0
+.claude/commands/report.md-         ;;
+.claude/commands/report.md-       * )
+.claude/commands/report.md-         echo "Cancelled."
+.claude/commands/report.md:         exit 0
+.claude/commands/report.md-         ;;
+.claude/commands/report.md-     esac
+--
+.claude/commands/plan/_core.md-
+.claude/commands/plan/_core.md-Key functions:
+.claude/commands/plan/_core.md:- `handle_error()` - Display error and exit with code
+.claude/commands/plan/_core.md-- Error codes for common failures (1-7)
+.claude/commands/plan/_core.md-- Helpful error messages with remediation steps
+--
+.claude/commands/capture-todos.md-   echo "📊 Execution Summary:"
+.claude/commands/capture-todos.md-   echo "✅ Successful operations: $(grep -c "success" $TEMP_DIR/execution.log)"
+.claude/commands/capture-todos.md:   echo "❌ Failed operations: $(grep -c "error" $TEMP_DIR/execution.log)"
+.claude/commands/capture-todos.md-   ```
+.claude/commands/capture-todos.md-

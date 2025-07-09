@@ -1,0 +1,100 @@
+.claude/commands/find-project.md-
+.claude/commands/find-project.md-```bash
+.claude/commands/find-project.md:# Monday morning priority check
+.claude/commands/find-project.md-/FindProject
+.claude/commands/find-project.md-
+--
+.claude/commands/report.md-3. **Information Gathering**
+.claude/commands/report.md-   Based on bug type, load appropriate template:
+.claude/commands/report.md:   - First check repo-specific: `templates/issues-{repo}/{bug-type}.md`
+.claude/commands/report.md-   - Fallback to generic: `templates/issues/bugs/{bug-type}.md`
+.claude/commands/report.md-   
+--
+.claude/commands/plan/implementation.md-Validate environment and permissions before execution.
+.claude/commands/plan/implementation.md-
+.claude/commands/plan/implementation.md:**Implementation**: See `scripts/execute_plan.sh` - `pre_execution_checks()` function
+.claude/commands/plan/implementation.md-
+.claude/commands/plan/implementation.md-Checks performed:
+--
+.claude/commands/plan/_core.md-### Validation Functions
+.claude/commands/plan/_core.md-
+.claude/commands/plan/_core.md:- `check_prerequisites()` - Validates gh CLI, git repo, auth, and access
+.claude/commands/plan/_core.md-- Automatically called by all plan subcommands
+.claude/commands/plan/_core.md-- Exits with appropriate error code on failure
+--
+.claude/commands/audit.md-1. **Regular Audits**: Run monthly to maintain repository health
+.claude/commands/audit.md-2. **Focus Areas**: Use --focus for targeted investigations
+.claude/commands/audit.md:3. **CI Integration**: Add to CI pipeline for automated checks
+.claude/commands/audit.md-4. **Track Progress**: Compare reports over time
+.claude/commands/audit.md-
+--
+.claude/commands/plan.md-   - Error handling and logging
+.claude/commands/plan.md-   - Rate limit management (exponential backoff, max 10 retries)
+.claude/commands/plan.md:   - Deduplication (check existing projects/milestones)
+.claude/commands/plan.md-
+.claude/commands/plan.md-### Phase 6: Preview & Approval
+--
+.claude/commands/plan.md-3. **Configure branch protection**:
+.claude/commands/plan.md-   - Require PR reviews
+.claude/commands/plan.md:   - Require status checks
+.claude/commands/plan.md-   - Protect main branch
+.claude/commands/plan.md-
+--
+.claude/commands/plan.md-   ```bash
+.claude/commands/plan.md-   FEATURE_BRANCH="feature/$FEATURE_NAME"
+.claude/commands/plan.md:   git checkout -b "$FEATURE_BRANCH"
+.claude/commands/plan.md-   ```
+.claude/commands/plan.md-
+--
+.claude/commands/plan.md-       "  [\(.number)] \(.title) (items: \(.items.totalCount))"'
+.claude/commands/plan.md-     
+.claude/commands/plan.md:     # Find milestones (check for those created in recent sessions)
+.claude/commands/plan.md-     echo ""
+.claude/commands/plan.md-     echo "🎯 Milestones:"
+--
+.claude/commands/plan.md-     # Find issues with plan labels or patterns
+.claude/commands/plan.md-     echo ""
+.claude/commands/plan.md:     echo "📝 Issues (checking multiple patterns):"
+.claude/commands/plan.md-     
+.claude/commands/plan.md-     # Pattern 1: plan-generated label
+--
+.claude/commands/plan.md-       jq -r '.[] | "    #\(.number) \(.title)"'
+.claude/commands/plan.md-     
+.claude/commands/plan.md:     # Pattern 2: Issues created in batches (check for session references)
+.claude/commands/plan.md-     if [ ${#PLAN_SESSIONS[@]} -gt 0 ]; then
+.claude/commands/plan.md-       echo "  From plan sessions:"
+--
+.claude/commands/report/feature.md-- **Integrations**: Medium priority, requires security review
+.claude/commands/report/feature.md-- **Patterns**: Low priority, requires examples
+.claude/commands/report/feature.md:- **Tools**: Medium priority, requires compatibility check
+.claude/commands/report/feature.md-
+.claude/commands/report/feature.md-## Integration
+--
+.claude/commands/command/init.md-- `process-detection.md` for finding reusable processes
+.claude/commands/command/init.md-- `_shared.md` for common utilities and principles
+.claude/commands/command/init.md:- `meta/slash-command-principles.md` for alignment checks
+.claude/commands/command/init.md-
+.claude/commands/command/init.md-## Best Practices
+--
+.claude/commands/command/process-detection.md-triggers: 
+.claude/commands/command/process-detection.md-  - "process detection"
+.claude/commands/command/process-detection.md:  - "reusability check"
+.claude/commands/command/process-detection.md-  - "find existing process"
+.claude/commands/command/process-detection.md-conflicts: []
+--
+.claude/commands/command/process-detection.md-## Related Modules
+.claude/commands/command/process-detection.md-- `init.md` - Uses this for command creation
+.claude/commands/command/process-detection.md:- `update.md` - Uses this for enhancement checks
+.claude/commands/command/process-detection.md-- `processes/meta/determine-prompt-reusability.md` - Core reusability logic
+--
+.claude/commands/role.md-
+.claude/commands/role.md-### Role-Aware Commands
+.claude/commands/role.md:Commands can check current role and adjust behavior:
+.claude/commands/role.md-```python
+.claude/commands/role.md-current_role = get_current_role()
+.claude/commands/role.md-if current_role.has_capability('security-assessment'):
+.claude/commands/role.md:    # Enhanced security checks available
+.claude/commands/role.md-```
+.claude/commands/role.md-
+--
+.claude/commands/find-work.md-/FindWork

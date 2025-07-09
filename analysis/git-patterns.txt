@@ -1,0 +1,100 @@
+.claude/commands/find-project.md-- `--with-work` - Include top 3 work items per project
+.claude/commands/find-project.md-- `--new` - Show only unlinked project ideas from PM tools
+.claude/commands/find-project.md:- `--deep-scan` - Perform thorough repository analysis
+.claude/commands/find-project.md-- `--format <type>` - Output format (terminal|markdown|json|report)
+.claude/commands/find-project.md-- `--focus <tag>` - Filter by focus.yaml tags
+--
+.claude/commands/find-project.md-/FindProject --new
+.claude/commands/find-project.md-
+.claude/commands/find-project.md:# Asana-specific high priority items
+.claude/commands/find-project.md-/FindProject --platform asana --priority high
+.claude/commands/find-project.md-
+--
+.claude/commands/find-project.md-  security_health: 0.20      # Security vulnerabilities
+.claude/commands/find-project.md-  build_health: 0.15         # CI/CD pipeline status
+.claude/commands/find-project.md:  bug_severity: 0.15         # Critical/high bugs
+.claude/commands/find-project.md-  review_debt: 0.10          # Stale PRs count
+.claude/commands/find-project.md-  deadline_proximity: 0.05   # Upcoming deadlines
+--
+.claude/commands/report.md-   # Capture environment
+.claude/commands/report.md-   CLAUDE_VERSION="${CLAUDE_MODEL:-unknown}"
+.claude/commands/report.md:   PROMPTS_VERSION=$(cd ~/.claude && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+.claude/commands/report.md-   ```
+.claude/commands/report.md-
+--
+.claude/commands/report.md-     # Git status and recent changes
+.claude/commands/report.md-     echo "### Git Status"
+.claude/commands/report.md:     git status --short
+.claude/commands/report.md-     echo "### Recent Git Changes"
+.claude/commands/report.md:     git diff --stat HEAD~5..HEAD
+.claude/commands/report.md-     
+.claude/commands/report.md-     # System information
+--
+.claude/commands/report.md-   fi
+.claude/commands/report.md-   
+.claude/commands/report.md:   # Create issue using gh CLI
+.claude/commands/report.md:   gh issue create \
+.claude/commands/report.md-     --repo "$REPO_OWNER/$REPO_NAME" \
+.claude/commands/report.md-     --title "$ISSUE_TITLE" \
+--
+.claude/commands/report.md-   fi
+.claude/commands/report.md-   
+.claude/commands/report.md:   # Create issue using gh CLI
+.claude/commands/report.md:   gh issue create \
+.claude/commands/report.md-     --repo "aRustyDev/prompts" \
+.claude/commands/report.md-     --title "$FEATURE_TITLE" \
+--
+.claude/commands/report.md-   ```bash
+.claude/commands/report.md-   # Create improvement issue
+.claude/commands/report.md:   gh issue create \
+.claude/commands/report.md-     --repo "$REPO_OWNER/$REPO_NAME" \
+.claude/commands/report.md-     --title "$IMPROVEMENT_TITLE" \
+--
+.claude/commands/report.md-  echo "- Claude Model: ${CLAUDE_MODEL:-unknown}"
+.claude/commands/report.md-  echo "- Claude Version: ${CLAUDE_VERSION:-unknown}"
+.claude/commands/report.md:  echo "- Prompts Version: $(cd ~/.claude && git describe --tags --always 2>/dev/null || echo 'unknown')"
+.claude/commands/report.md-  echo "- Platform: $(uname -s)"
+.claude/commands/report.md-  echo "- Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+--
+.claude/commands/report.md-1. **Parse Arguments**: Determine subcommand and options
+.claude/commands/report.md-2. **Gather Context**: Automatically collect environment and conversation data
+.claude/commands/report.md:3. **Interactive Flow**: Guide through appropriate template selection
+.claude/commands/report.md-4. **Populate Template**: Fill in all variables with gathered information
+.claude/commands/report.md-5. **Preview Issue**: Display formatted preview (unless --no-preview is set)
+--
+.claude/commands/report.md-Claude: I'll use the unexpected behavior template. Please describe what unexpected behavior you encountered...
+.claude/commands/report.md-
+.claude/commands/report.md:[Claude guides through template completion]
+.claude/commands/report.md-
+.claude/commands/report.md-╭─────────────────────────────────────────────╮
+--
+.claude/commands/report.md-- **Enhancement**: Added `--repo` flag to skip interactive repository selection
+.claude/commands/report.md-- **Enhancement**: Improved template resolution with repo-specific fallback
+.claude/commands/report.md:- **Enhancement**: Added diagnostic data collection (logs, git info, system metrics)
+.claude/commands/report.md-- **Process Integration**: Added `meta/context-analysis` for enhanced context
+.claude/commands/report.md-- **Configuration**: Added `.gitignore` for custom templates
+--
+.claude/commands/plan/implementation.md-    due_on=$(_jq '.due_on')
+.claude/commands/plan/implementation.md-    
+.claude/commands/plan/implementation.md:    number=$(gh api repos/:owner/:repo/milestones \
+.claude/commands/plan/implementation.md-        --method POST \
+.claude/commands/plan/implementation.md-        --field title="$title" \
+--
+.claude/commands/plan/_core.md-### Validation Functions
+.claude/commands/plan/_core.md-
+.claude/commands/plan/_core.md:- `check_prerequisites()` - Validates gh CLI, git repo, auth, and access
+.claude/commands/plan/_core.md-- Automatically called by all plan subcommands
+.claude/commands/plan/_core.md-- Exits with appropriate error code on failure
+--
+.claude/commands/plan/.meta.md-
+.claude/commands/plan/.meta.md-## Workflow
+.claude/commands/plan/.meta.md:The planning process flows through phases: discovery → analysis → design → implementation. Each phase builds on the previous one.
+--
+.claude/commands/plan/discovery.md-## Phase 2: Iterative Information Gathering
+.claude/commands/plan/discovery.md-
+.claude/commands/plan/discovery.md:**CRITICAL**: This is the most important phase. You must be thorough and persistent in gathering information.
+.claude/commands/plan/discovery.md-
+.claude/commands/plan/discovery.md-### High-Level Questions
+--
+.claude/commands/plan/templates/structure-examples.md-    "name": "p1-high",
+.claude/commands/plan/templates/structure-examples.md-    "color": "D93F0B",
