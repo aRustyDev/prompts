@@ -1,0 +1,97 @@
+# Pre-commit hooks for Claude module quality assurance
+# Install: pip install pre-commit && pre-commit install
+
+repos:
+  # Local hooks for Claude-specific validation
+  - repo: local
+    hooks:
+      # Check for empty files
+      - id: check-empty-files
+        name: Check for empty files
+        entry: .claude/hooks/check-empty-files.sh
+        language: script
+        files: \.claude/.*\.(md|yaml|yml)$
+        pass_filenames: true
+        description: Prevents committing empty module files
+      
+      # Validate module dependencies
+      - id: validate-dependencies
+        name: Validate module dependencies
+        entry: .claude/hooks/validate-dependencies.sh
+        language: script
+        files: \.claude/.*\.md$
+        pass_filenames: true
+        description: Ensures all module dependencies exist
+      
+      # Enforce naming conventions
+      - id: enforce-naming
+        name: Enforce naming conventions
+        entry: .claude/hooks/enforce-naming.sh
+        language: script
+        files: \.claude/
+        pass_filenames: true
+        description: Checks file and module naming standards
+      
+      # Check module size
+      - id: check-module-size
+        name: Check module size limits
+        entry: .claude/hooks/check-module-size.sh
+        language: script
+        files: \.claude/.*\.md$
+        pass_filenames: true
+        description: Ensures modules stay under 200 lines
+      
+      # Validate YAML frontmatter
+      - id: validate-frontmatter
+        name: Validate YAML frontmatter
+        entry: .claude/hooks/validate-frontmatter.sh
+        language: script
+        files: \.claude/.*\.md$
+        pass_filenames: true
+        description: Checks required frontmatter fields
+      
+      # Security scan
+      - id: security-scan
+        name: Security scan for secrets
+        entry: .claude/hooks/security-scan.sh
+        language: script
+        files: \.claude/
+        pass_filenames: true
+        description: Prevents hardcoded secrets
+  
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        files: \.claude/.*\.(md|yaml|yml)$
+      - id: end-of-file-fixer
+        files: \.claude/.*\.(md|yaml|yml)$
+      - id: check-yaml
+        files: \.claude/.*\.(yaml|yml)$
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+  
+  # YAML linting
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        files: \.claude/.*\.(yaml|yml)$
+        args: ['-c', '.claude/hooks/yamllint-config.yaml']
+  
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.37.0
+    hooks:
+      - id: markdownlint
+        files: \.claude/.*\.md$
+        args: ['--config', '.claude/hooks/markdownlint-config.yaml']
+
+# Configuration
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [commit]
+fail_fast: false
+verbose: true
