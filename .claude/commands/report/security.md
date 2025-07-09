@@ -9,6 +9,8 @@ conflicts: []
 dependencies:
   - _templates.md
   - _interactive.md
+  - _security_templates.md
+  - cvss-scoring.md
 priority: high
 ---
 
@@ -133,94 +135,22 @@ Workarounds:
 
 ## CVSS Scoring
 
-When `--cvss` is used, calculate score:
-
-```
-CVSS v3.1 Base Score Calculator
-
-Attack Vector (AV):
-- Network (N)
-- Adjacent Network (A)
-- Local (L)
-- Physical (P)
-
-Attack Complexity (AC):
-- Low (L)
-- High (H)
-
-Privileges Required (PR):
-- None (N)
-- Low (L)
-- High (H)
-
-User Interaction (UI):
-- None (N)
-- Required (R)
-
-[Calculate score...]
-```
+When `--cvss` is used, see `cvss-scoring.md` for:
+- Complete CVSS v3.1 base score calculator
+- Attack vector definitions and scores
+- Impact metrics and calculations
+- Example vectors for common vulnerabilities
 
 ## Security Templates
 
-### Critical Vulnerability Template
-```markdown
-# SECURITY ADVISORY - CONFIDENTIAL
+**See**: `_security_templates.md` for complete templates
 
-## Summary
-{{vulnerability_summary}}
-
-## Severity
-**CRITICAL** - CVSS 9.8 ({{cvss_vector}})
-
-## Description
-{{detailed_description}}
-
-## Affected Versions
-{{affected_versions}}
-
-## Proof of Concept
-{{poc_steps}}
-
-## Impact
-{{impact_analysis}}
-
-## Mitigation
-### Immediate Actions
-{{immediate_mitigation}}
-
-### Patches
-{{patch_information}}
-
-## Timeline
-- Discovery: {{discovery_date}}
-- Reported: {{report_date}}
-- Fixed: {{fix_date}}
-- Disclosed: {{disclosure_date}}
-
-## Credit
-{{reporter_credit}}
-```
-
-### Dependency Vulnerability Template
-```markdown
-## Summary
-Vulnerable dependency: {{dependency_name}}
-
-## Details
-- Package: {{package_name}}
-- Version: {{current_version}}
-- Vulnerability: {{cve_id}}
-- Severity: {{severity}}
-
-## Affected Components
-{{affected_components}}
-
-## Remediation
-Update to version {{fixed_version}} or later
-
-## Workaround
-{{workaround_if_any}}
-```
+Available templates:
+- Critical Vulnerability Template - For critical security issues
+- Dependency Vulnerability Template - For vulnerable dependencies
+- Security Issue Template - General security issues
+- Security Advisory Template - Formal security advisories
+- Incident Report Template - Post-incident documentation
 
 ## Responsible Disclosure
 

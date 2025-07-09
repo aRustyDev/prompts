@@ -9,6 +9,7 @@ conflicts: []
 dependencies:
   - _templates.md
   - _interactive.md
+  - _improvement_templates.md
 priority: high
 ---
 
@@ -127,93 +128,17 @@ Complexity [1-5]:
 
 ## Improvement Templates
 
-### Performance Improvement Template
-```markdown
-## Summary
-{{improvement_title}}
+**See**: `_improvement_templates.md` for complete templates
 
-## Current Performance
-- Metric: {{current_metric}}
-- Bottleneck: {{bottleneck_description}}
-- Impact: {{user_impact}}
+Available templates:
+- Performance Improvement Template
+- Usability Improvement Template
+- Code Quality Improvement Template
+- Documentation Improvement Template
+- Process Improvement Template
+- Integration Improvement Template
 
-## Proposed Optimization
-{{optimization_description}}
-
-## Expected Results
-- Metric improvement: {{expected_metric}}
-- User benefit: {{benefit_description}}
-
-## Implementation Approach
-1. {{step_1}}
-2. {{step_2}}
-3. {{step_3}}
-
-## Testing Plan
-{{testing_approach}}
-
-## Rollout Strategy
-{{rollout_plan}}
-```
-
-### Usability Improvement Template
-```markdown
-## Summary
-{{improvement_title}}
-
-## Current UX Issues
-{{current_problems}}
-
-## User Feedback
-{{feedback_summary}}
-
-## Proposed Changes
-### Before
-{{current_experience}}
-
-### After
-{{improved_experience}}
-
-## Benefits
-- {{benefit_1}}
-- {{benefit_2}}
-- {{benefit_3}}
-
-## Design Mockups
-{{mockups_or_examples}}
-
-## A/B Testing Plan
-{{testing_plan}}
-```
-
-### Code Quality Improvement Template
-```markdown
-## Summary
-{{improvement_title}}
-
-## Current Issues
-- Code smell: {{issue_1}}
-- Technical debt: {{issue_2}}
-- Maintainability: {{issue_3}}
-
-## Refactoring Proposal
-### Current Structure
-{{current_code_structure}}
-
-### Proposed Structure
-{{proposed_structure}}
-
-## Benefits
-- Readability: {{readability_improvement}}
-- Testability: {{testability_improvement}}
-- Performance: {{performance_impact}}
-
-## Migration Strategy
-{{migration_approach}}
-
-## Risk Assessment
-{{risks_and_mitigation}}
-```
+Each template provides structured format for specific improvement types.
 
 ## Data-Driven Improvements
 

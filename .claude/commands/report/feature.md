@@ -9,6 +9,7 @@ conflicts: []
 dependencies:
   - _templates.md
   - _interactive.md
+  - _feature_templates.md
 priority: high
 ---
 
@@ -140,82 +141,17 @@ How many users would this impact?
 
 ## Feature Templates
 
-### Command Feature Template
-```markdown
-## Summary
-{{feature_summary}}
+**See**: `_feature_templates.md` for complete templates
 
-## User Story
-As a {{user_type}}
-I want {{feature_description}}
-So that {{benefit}}
+Available templates:
+- Command Feature Template - For new slash commands
+- Integration Feature Template - For external service integrations
+- Module Feature Template - For new system modules
+- UI Feature Template - For user interface enhancements
+- API Feature Template - For new API endpoints
+- Workflow Feature Template - For process automation
 
-## Description
-{{detailed_description}}
-
-## Requirements
-### Functional Requirements
-{{functional_requirements}}
-
-### Non-Functional Requirements
-- Performance: {{performance_needs}}
-- Security: {{security_needs}}
-- Usability: {{usability_needs}}
-
-## Acceptance Criteria
-{{acceptance_criteria}}
-
-## Use Cases
-### Use Case 1: {{use_case_1_title}}
-{{use_case_1_description}}
-
-### Use Case 2: {{use_case_2_title}}
-{{use_case_2_description}}
-
-## Technical Design
-### Proposed Implementation
-{{implementation_approach}}
-
-### Dependencies
-{{dependencies}}
-
-### API Design (if applicable)
-{{api_design}}
-
-## Impact Analysis
-- Users affected: {{user_impact}}
-- Backward compatibility: {{compatibility}}
-- Documentation needs: {{doc_needs}}
-
-## Alternatives Considered
-{{alternatives}}
-```
-
-### Integration Feature Template
-```markdown
-## Summary
-Integration with {{service_name}}
-
-## Motivation
-{{why_needed}}
-
-## Integration Points
-{{integration_details}}
-
-## Authentication
-{{auth_requirements}}
-
-## Data Flow
-{{data_flow_description}}
-
-## Security Considerations
-{{security_notes}}
-
-## Implementation Phases
-1. {{phase_1}}
-2. {{phase_2}}
-3. {{phase_3}}
-```
+Select template based on feature type and replace placeholders with specifics.
 
 ## Creating New Feature Types
 

@@ -9,6 +9,7 @@ conflicts: []
 dependencies:
   - _templates.md
   - _interactive.md
+  - _bug_templates.md
 priority: high
 ---
 
@@ -140,64 +141,18 @@ When `--quick` flag is used:
 
 ## Bug Report Templates
 
-### Execution Error Template
-```markdown
-## Summary
-Command execution failed with error
+**See**: `_bug_templates.md` for complete templates
 
-## Command
-`/{{command}}`
+Available templates:
+- Execution Error Template - Command fails with error
+- Unexpected Behavior Template - Wrong output or results
+- Missing Behavior Template - Expected functionality is missing
+- Performance Issue Template - Slow execution or high resource usage
+- Documentation Bug Template - Incorrect or missing documentation
+- Logic Order Bug Template - Steps execute in wrong order
+- General Bug Template - Other types of bugs
 
-## Error Message
-```
-{{error_message}}
-```
-
-## Steps to Reproduce
-{{reproduction_steps}}
-
-## Expected Behavior
-Command should execute successfully
-
-## Actual Behavior
-{{actual_behavior}}
-
-## Environment
-- Claude Version: {{claude_version}}
-- Prompts Version: {{prompts_version}}
-- System: {{system_info}}
-
-## Additional Context
-{{additional_context}}
-```
-
-### Unexpected Behavior Template
-```markdown
-## Summary
-{{brief_description}}
-
-## Command
-`/{{command}}`
-
-## Expected Behavior
-{{expected_behavior}}
-
-## Actual Behavior
-{{actual_behavior}}
-
-## Steps to Reproduce
-{{reproduction_steps}}
-
-## Impact
-{{impact_description}}
-
-## Environment
-- Claude Version: {{claude_version}}
-- Prompts Version: {{prompts_version}}
-
-## Possible Cause
-{{analysis}}
-```
+Select template based on bug type and replace placeholders with actual values.
 
 ## Context Enhancement
 
