@@ -2,7 +2,15 @@
 name: report
 description: Create GitHub issues for bugs, features, and improvements across multiple repositories
 author: Claude
-version: 2.0.0
+version: 3.0.0
+modules:
+  - report/bug.md
+  - report/feature.md
+  - report/improvement.md
+  - report/security.md
+  - report/audit.md
+  - report/_templates.md
+  - report/_interactive.md
 ---
 
 # Command: /report
@@ -14,10 +22,64 @@ Create GitHub issues to report bugs, request features, or suggest improvements a
 /report <subcommand> [options]
 ```
 
-## Subcommands
-- `bug` - Report something broken or unexpected
-- `feature` - Request new functionality or capability
-- `improvement` - Suggest enhancements to existing functionality
+## Architecture
+
+This command is implemented as a modular system with specialized modules for each report type:
+
+### Report Type Modules
+
+1. **`bug.md`** - Bug Report Creation
+   - Execution errors and unexpected behavior
+   - Comprehensive bug templates with reproduction steps
+   - Enhanced context gathering options
+
+2. **`feature.md`** - Feature Request Creation
+   - New functionality requests
+   - User stories and acceptance criteria
+   - Use case documentation
+
+3. **`improvement.md`** - Enhancement Suggestions
+   - Performance, usability, and code quality improvements
+   - Data-driven improvement proposals
+   - Impact assessment
+
+4. **`security.md`** - Security Issue Reporting
+   - Responsible disclosure workflows
+   - CVSS scoring and severity assessment
+   - Private security advisories
+
+5. **`audit.md`** - Audit Findings and Recommendations
+   - Repository audit reports
+   - Architecture compliance findings
+   - Progress tracking
+
+### Shared Modules
+
+6. **`_templates.md`** - Issue Templates
+   - Reusable issue templates
+   - Template generation utilities
+   - Formatting helpers
+
+7. **`_interactive.md`** - Interactive Prompts
+   - User interaction flows
+   - Input validation
+   - Repository selection
+
+## Module Loading Strategy
+
+The report command loads modules based on the subcommand:
+
+```yaml
+subcommand_modules:
+  bug: report/bug.md
+  feature: report/feature.md
+  improvement: report/improvement.md
+  security: report/security.md
+  audit: report/audit.md
+  shared:
+    - report/_templates.md
+    - report/_interactive.md
+```
 
 ## Process Dependencies
 ```yaml
