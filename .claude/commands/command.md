@@ -2,10 +2,16 @@
 name: command
 description: Comprehensive slash command management tool for creating, updating, and reviewing commands
 author: Claude Code
-version: 3.0.0
+version: 3.1.0
 dependencies:
   - meta/slash-command-principles.md
   - processes/meta/determine-prompt-reusability.md
+modules:
+  - command/init.md
+  - command/update.md
+  - command/review.md
+  - command/process-detection.md
+  - command/_shared.md
 ---
 
 # Command - Slash Command Management Suite
@@ -18,16 +24,52 @@ I'll help you create, update, or review slash commands with a focus on reusabili
 /project:command [init|update|review]
 ```
 
-## Subcommands
+## Architecture
 
-### 1. `init` - Create New Command
-**Purpose**: Interactive command creation with comprehensive requirements analysis and process detection
+This command is implemented as a modular system with specialized modules for each subcommand:
 
-### 2. `update` - Enhance Existing Command  
-**Purpose**: Add features or modify functionality while maintaining consistency and reusability
+### Core Modules
 
-### 3. `review` - Analyze Command Quality
-**Purpose**: Critical analysis of command implementation, reusability, and alignment with principles
+1. **`init.md`** - Create New Command
+   - Interactive command creation with comprehensive requirements analysis
+   - Process detection and template generation
+   - Handles `/project:command init`
+
+2. **`update.md`** - Enhance Existing Command  
+   - Add features or modify functionality while maintaining consistency
+   - Preserves backward compatibility
+   - Handles `/project:command update`
+
+3. **`review.md`** - Analyze Command Quality
+   - Critical analysis of command implementation
+   - Reusability assessment and principle alignment
+   - Handles `/project:command review`
+
+### Shared Modules
+
+4. **`process-detection.md`** - Process Discovery
+   - Reusable process detection logic
+   - Maps user goals to existing processes
+   - Used by multiple subcommands
+
+5. **`_shared.md`** - Common Utilities
+   - Shared patterns and utilities
+   - Validation functions
+   - Template helpers
+
+## Module Loading
+
+Based on the subcommand used, the appropriate module is loaded:
+
+```yaml
+subcommand_mapping:
+  init: command/init.md
+  update: command/update.md
+  review: command/review.md
+  default: command/init.md
+```
+
+All modules have access to shared utilities via `_shared.md`.
 
 ---
 
