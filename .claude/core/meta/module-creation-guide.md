@@ -3,7 +3,7 @@ module: ModuleCreationGuide
 scope: persistent
 triggers: ["create module", "new module", "module template", "how to write module"]
 conflicts: []
-dependencies: ["module-validation"]
+dependencies: ["module-interface"]
 priority: high
 ---
 
