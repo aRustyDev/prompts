@@ -3,7 +3,7 @@ module: ModuleValidation
 scope: persistent
 triggers: ["validate module", "check module", "module validation", "test module"]
 conflicts: []
-dependencies: ["module-creation-guide"]
+dependencies: ["module-interface"]
 priority: high
 ---
 
