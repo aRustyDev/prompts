@@ -1,5 +1,5 @@
 ---
-module: Report_interactive
+module: ReportInteractive
 scope: context  # persistent|context|temporary
 triggers: 
   - "${TRIGGER_1}"

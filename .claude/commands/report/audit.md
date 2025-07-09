@@ -1,5 +1,5 @@
 ---
-module: Reportaudit
+module: ReportAudit
 scope: context  # persistent|context|temporary
 triggers: 
   - "${TRIGGER_1}"
