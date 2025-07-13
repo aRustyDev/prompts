@@ -1,0 +1,213 @@
+// https://github.com/utensils/mcp-nixos
+// https://mcp.so/server/pearch/Pearch-ai
+// https://mcp.so/server/maestro/mobile-dev-inc
+// https://mcp.so/server/mcp-server-browserbase/browserbase
+// https://mcp.so/server/redis/modelcontextprotocol
+// https://mcp.so/server/perplexity/ppl-ai
+// https://mcp.so/server/context7/upstash
+// https://mcp.so/server/cloudflare
+// https://mcp.so/server/aws-kb-retrieval-server/modelcontextprotocol
+// https://mcp.so/server/gitlab/modelcontextprotocol
+// https://mcp.so/server/Figma-Context-MCP/GLips
+// https://mcpservers.org/servers/daheepk/arxiv-paper-mcp
+// https://mcpservers.org/servers/djm81/chroma_mcp_server
+// https://mcpservers.org/servers/context-hub/generator
+// https://mcpservers.org/servers/nxt3d/mcp-crm
+// https://mcpservers.org/servers/dbt-labs/dbt-mcp
+// https://mcpservers.org/servers/mattijsdp/dbt-docs-mcp
+// https://mcpservers.org/servers/QuantGeekDev/docker-mcp/
+// https://mcpservers.org/servers/ddukbg/github-enterprise-mcp
+// https://mcpservers.org/servers/PV-Bhat/gemsuite-mcp
+// https://mcpservers.org/servers/pansila/mcp_server_gdb
+// https://mcpservers.org/servers/yikakia/godoc-mcp-server
+// https://mcpservers.org/servers/grafana/mcp-grafana
+// https://mcpservers.org/servers/mrexodia/ida-pro-mcp
+// https://mcpservers.org/servers/assafelovic/gptr-mcp
+// https://mcpservers.org/servers/iHackSubhodip/ios-mcp-server
+// https://mcpservers.org/servers/liaosiqian/interactive-feedback-mcp
+// https://mcpservers.org/servers/redhat-ai-tools/jira-mcp
+// https://mcpservers.org/servers/rahulthedevil/Jira-Context-MCP
+// https://mcpservers.org/servers/SunWooBang/jira-mcp-server
+// https://mcpservers.org/servers/VadimNastoyashchy/json-mcp
+// https://mcpservers.org/servers/MCP-Mirror/dweigend_joplin-mcp-server
+// https://mcpservers.org/servers/n-r-w/knowledgegraph-mcp
+// https://mcpservers.org/servers/Flux159/mcp-server-kubernetes
+// https://mcpservers.org/servers/kkb0318/kubernetes-mcp
+// https://mcpservers.org/servers/StacklokLabs/mkp
+// https://mcpservers.org/servers/vikramdse/docs-mcp-server
+// https://mcpservers.org/servers/h3ro-dev/limitless-mcp-server
+// https://mcpservers.org/servers/tacticlaunch/mcp-linear
+// https://mcpservers.org/servers/pydantic/logfire-mcp
+// https://mcpservers.org/servers/MCP-Mirror/abdessamad-elamrani_MalwareAnalyzerMCP
+// https://mcpservers.org/servers/integromat/make-mcp-server
+// https://mcpservers.org/servers/Bigsy/maven-mcp-server
+// https://mcpservers.org/servers/DJ-RINO/mcp-gemini-cli
+// https://mcpservers.org/servers/husniadil/mcp-image-placeholder
+// https://mcpservers.org/servers/ifmelate/mcp-image-extractor
+// https://mcpservers.org/servers/doobidoo/mcp-memory-dashboard
+// https://mcpservers.org/servers/Cactusinhand/mcp_server_notify
+// https://mcpservers.org/servers/4R9UN/mcp-kql-server
+// https://mcpservers.org/servers/karaage0703/mcp-rag-server
+// https://mcpservers.org/servers/8enSmith/mcp-open-library
+// https://mcpservers.org/servers/meilisearch/meilisearch-mcp
+// https://mcpservers.org/servers/Yuchen20/Memory-Plus
+// https://mcpservers.org/servers/dmayboroda/minima
+// https://mcpservers.org/servers/hustcc/mcp-mermaid
+// https://mcpservers.org/servers/zilliztech/mcp-server-milvus
+// https://mcpservers.org/servers/imlewc/metabase-server
+// https://mcpservers.org/servers/mobile-next/mobile-mcp
+// https://mcpservers.org/servers/furey/mongodb-lens
+// https://mcpservers.org/servers/angrysky56/NeoCoder-neo4j-ai-workflow
+// https://mcpservers.org/servers/neo4j-contrib/mcp-neo4j
+// https://mcpservers.org/servers/adawalli/nexus
+// https://mcpservers.org/servers/QuantGeekDev/mongo-mcp
+// https://mcpservers.org/servers/kiliczsh/mcp-mongo-server
+// https://mcpservers.org/servers/motherduckdb/mcp-server-motherduck
+// https://mcpservers.org/servers/makenotion/notion-mcp-server
+// https://mcpservers.org/servers/MarkusPfundstein/mcp-obsidian
+// https://mcpservers.org/servers/kayaozkur/mcp-server-obsidian
+// https://mcpservers.org/servers/Vasallo94/obsidian-mcp-server
+// https://mcpservers.org/servers/dbmcco/obsidian-mcp
+// https://mcpservers.org/servers/rawveg/ollama-mcp
+// https://mcpservers.org/servers/kadykov/mcp-openapi-schema-explorer
+// https://mcpservers.org/servers/StacklokLabs/osv-mcp
+// https://mcpservers.org/servers/Pixelworlds/opnsense-mcp-server
+// https://mcpservers.org/servers/Vortiago/mcp-outline
+// https://mcpservers.org/servers/vivekVells/mcp-pandoc
+// https://mcpservers.org/servers/baruchiro/paperless-mcp
+// https://mcpservers.org/servers/ppl-ai/modelcontextprotocol
+// https://mcpservers.org/servers/hao-cyber/phone-mcp
+// https://mcpservers.org/servers/baba786/phabricator-mcp-server
+// https://mcpservers.org/servers/pinecone-io/pinecone-mcp
+// https://mcpservers.org/servers/microsoft/playwright-mcp
+// https://mcpservers.org/servers/qdrant/mcp-server-qdrant
+// https://mcpservers.org/servers/Hypersequent/qasphere-mcp
+// https://mcpservers.org/servers/hdresearch/mcp-python
+// https://mcpservers.org/servers/twodoorsdev/react-native-debugger-mcp
+// https://mcpservers.org/servers/Hawstein/mcp-server-reddit
+// https://mcpservers.org/servers/myuon/refactor-mcp
+// https://mcpservers.org/servers/ref-tools/ref-tools-mcp
+// https://mcpservers.org/servers/ReexpressAI/reexpress_mcp_server
+// https://mcpservers.org/servers/schemacrawler/SchemaCrawler-MCP-Server-Usage
+// https://mcpservers.org/servers/CryptoRadi/schemaflow-mcp-server
+// https://mcpservers.org/servers/getsentry/sentry-mcp
+// https://mcpservers.org/servers/kevinwatt/shell-mcp
+// https://mcpservers.org/servers/andybrandt/mcp-simple-arxiv
+// https://mcpservers.org/servers/panasenco/mcp-sqlite
+// https://mcpservers.org/servers/supabase-community/supabase-mcp
+// https://mcpservers.org/servers/khromov/llmctx
+// https://mcpservers.org/servers/EchoingVesper/mcp-task-orchestrator
+// https://mcpservers.org/servers/cni-locates-rumen/t-pane
+// https://mcpservers.org/servers/nickgnd/tmux-mcp
+// https://mcpservers.org/servers/Arize-ai/text-to-graphql-mcp
+// https://mcpservers.org/servers/Excoriate/mcp-terragrunt-docs
+// https://mcpservers.org/servers/very99/text-master-mcp
+// https://mcpservers.org/servers/fourcolors/think-tool
+// https://mcpservers.org/servers/stanislavlysenko0912/todoist-mcp-server
+// https://mcpservers.org/servers/twilio-labs/mcp
+// https://mcpservers.org/servers/Unstructured-IO/UNS-MCP
+// https://mcpservers.org/servers/urldna/mcp
+// https://mcpservers.org/servers/mrexodia/user-feedback-mcp
+// https://mcpservers.org/servers/sdiehl/usolver
+// https://mcpservers.org/servers/vectorize-io/vectorize-mcp-server
+// https://mcpservers.org/servers/isaacwasserman/mcp-vegalite-server
+// https://mcpservers.org/servers/video-db/agent-toolkit
+// https://mcpservers.org/servers/bharathvaj-ganesan/whois-mcp
+// https://mcpservers.org/servers/gustavo-meilus/mcp-web-snapshot
+// https://mcpservers.org/servers/SimonB97/win-cli-mcp-server
+// https://mcpservers.org/servers/Cheffromspace/nutjs-windows-control
+// https://mcpservers.org/servers/devyhan/xcode-mcp
+// https://mcpservers.org/servers/ShenghaiWang/xcodebuild
+// https://mcpservers.org/servers/cameroncooke/xcodebuildmcp
+// https://mcpservers.org/servers/nzrsky/simctl-mcp-server
+// https://mcpservers.org/servers/nzrsky/xctools-mcp-server
+// https://mcpservers.org/servers/zenml-io/mcp-zenml
+// https://mcpservers.org/servers/zeplin/mcp-server
+// jira
+// confluence
+// goose
+{
+    "mcpServers": {
+        "github": {
+          "url": "https://api.githubcopilot.com/mcp/",
+          "authorization_token": "Bearer <your GitHub PAT>"
+        }
+        "github": {
+            "command": "docker",
+            "args": [
+                "run",
+                "-i",
+                "--rm",
+                "--env",
+                "GITHUB_PERSONAL_ACCESS_TOKEN",
+                "ghcr.io/github/github-mcp-server"
+            ],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PAT}",
+                "MCP_GITHUB_AVAILABLE": "true",
+                "LOG_LEVEL": "${MCP_LOG_LEVEL:-info}",
+                "CACHE_DIR": "${XDG_CACHE_HOME:-${HOME}/.cache}/mcp"
+            }
+        },
+        "project-specific-tool": {
+            "command": "${HOME}/.mcp/my-mcp-server",
+            "args": ["--project", "${PWD}"],
+            "env": {
+                "PROJECT_CONFIG": "${PWD}/.config"
+            }
+        },
+        "uiTesting": {
+            "command": "${HOME}/.mcp/uiTesting",
+            "args": ["--project", "${PWD}"],
+            "env": {
+                "PROJECT_CONFIG": "${PWD}/.config"
+            }
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "/path/to/allowed/directory"
+            ]
+        },
+        "git": {
+            "command": "docker",
+            "args": [
+                "run",
+                "--rm",
+                "-i",
+                "--mount",
+                "type=bind,src=${workspaceFolder},dst=/workspace",
+                "mcp/git"
+            ]
+        },
+        "memory": {
+            "command": "docker",
+            "args": [
+                "run",
+                "-i",
+                "-v",
+                "claude-memory:/app/dist",
+                "--rm",
+                "mcp/memory"
+            ]
+        },
+        "sequentialthinking": {
+            "command": "docker",
+            "args": ["run", "--rm", "-i", "mcp/sequentialthinking"]
+        },
+        "time": {
+            "command": "docker",
+            "args": ["run", "-i", "--rm", "mcp/time"]
+        },
+        "postgres": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-postgres",
+                "${DATABASE_URL:-postgresql://localhost/mydb}"
+            ]
+        }
+    }
+}

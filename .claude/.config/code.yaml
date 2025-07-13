@@ -1,0 +1,30 @@
+# Code Configuration
+# Define code-related settings and preferences
+
+code:
+  style:
+    indent: "spaces"
+    indent_size: 2
+    line_length: 100
+    
+  linting:
+    enabled: true
+    on_save: true
+    fix_on_save: false
+    
+  formatting:
+    enabled: true
+    on_save: true
+    
+  testing:
+    framework: "pytest"
+    coverage_threshold: 80
+    run_on_save: false
+    
+  documentation:
+    style: "google"
+    require_docstrings: true
+    
+  security:
+    scan_commits: true
+    prevent_secrets: true

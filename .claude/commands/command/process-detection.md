@@ -7,7 +7,7 @@ triggers:
   - "find existing process"
 conflicts: []
 dependencies:
-  - processes/meta/determine-prompt-reusability.md
+  - shared/processes/meta/determine-prompt-reusability.md
 priority: high
 ---
 
@@ -23,9 +23,9 @@ This module implements the process detection and analysis phase for command crea
 
 1. **Analyze description keywords** to identify potential process matches
 2. **Search ~/.claude/** for relevant modules:
-   - **processes/** - Step-by-step procedures
-   - **patterns/** - Development patterns
-   - **workflows/** - Complex workflows
+   - **shared/processes/** - Step-by-step procedures
+   - **shared/patterns/** - Development patterns
+   - **shared/workflows/** - Complex workflows
    - **templates/** - Reusable structures
    - **guides/** - How-to documentation
 
@@ -122,7 +122,7 @@ This module integrates with the command creation workflow:
 ### Unconditional Extension
 When a feature benefits all users of a process:
 ```yaml
-extends: processes/testing/unit-test-runner
+extends: shared/processes/testing/unit-test-runner
 additions:
   - feature: parallel-execution
     always_active: true
@@ -132,7 +132,7 @@ additions:
 ### Conditional Extension
 When a feature is context-specific:
 ```yaml
-extends: processes/testing/unit-test-runner
+extends: shared/processes/testing/unit-test-runner
 additions:
   - feature: coverage-report
     condition: "--coverage flag provided"
@@ -142,4 +142,4 @@ additions:
 ## Related Modules
 - `init.md` - Uses this for command creation
 - `update.md` - Uses this for enhancement checks
-- `processes/meta/determine-prompt-reusability.md` - Core reusability logic
+- `shared/processes/meta/determine-prompt-reusability.md` - Core reusability logic

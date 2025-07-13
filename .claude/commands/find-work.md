@@ -208,25 +208,25 @@ outputs:
 ## Integration Points
 
 ### Calendar Integration
-When `--calendar` is used, loads `processes/integrations/calendar-integration.md`:
+When `--calendar` is used, loads `shared/processes/integrations/calendar-integration.md`:
 - Checks calendar availability
 - Filters work by available time slots
 - Suggests optimal work scheduling
 
 ### Interactive Mode
-When `--interactive` is used, loads `processes/ui/interactive-selection.md`:
+When `--interactive` is used, loads `shared/processes/ui/interactive-selection.md`:
 - Browse work items one by one
 - Accept/reject/skip with reason tracking
 - Learn user preferences over time
 
 ### TODO System Sync
-When `TODO_INTEGRATION_ENABLED=true`, loads `processes/integrations/todo-integration.md`:
+When `TODO_INTEGRATION_ENABLED=true`, loads `shared/processes/integrations/todo-integration.md`:
 - Syncs selected work to TODO system
 - Tracks work item progress
 - Updates completion status
 
 ### Notifications
-When `NOTIFICATIONS_ENABLED=true`, loads `processes/integrations/notification-system.md`:
+When `NOTIFICATIONS_ENABLED=true`, loads `shared/processes/integrations/notification-system.md`:
 - Sends critical work alerts
 - Daily digest notifications
 - PR review reminders
@@ -258,12 +258,12 @@ Deep scan for security issues with detailed report.
 Export all work for current sprint planning.
 
 ## Dependencies
-- `processes/issue-tracking/identifying-work.md` - Core discovery
-- `processes/meta/multi-criteria-ranking.md` - Scoring system
-- `workflows/repository-audit.yaml` - Deep scanning
+- `shared/processes/issue-tracking/identifying-work.md` - Core discovery
+- `shared/processes/meta/multi-criteria-ranking.md` - Scoring system
+- `shared/workflows/repository-audit.yaml` - Deep scanning
 - `commands/capture-todos.md` - TODO file analysis
-- `processes/integrations/*` - Optional integrations
-- `processes/ui/*` - UI components
+- `shared/processes/integrations/*` - Optional integrations
+- `shared/processes/ui/*` - UI components
 
 ## Configuration
 ```yaml
@@ -287,4 +287,4 @@ find_work:
 - `/FindProject` - Find projects needing attention
 - `/CaptureTodos` - Capture TODOs from codebase
 - `/Audit` - Full repository audit
-- `processes/issue-tracking/identifying-work.md` - Work discovery details
+- `shared/processes/issue-tracking/identifying-work.md` - Work discovery details

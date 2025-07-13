@@ -9,8 +9,8 @@ conflicts: []
 dependencies:
   - _shared.md
   - process-detection.md
-  - meta/slash-command-principles.md
-  - processes/meta/determine-prompt-reusability.md
+  - .meta/slash-command-principles.md
+  - shared/processes/meta/determine-prompt-reusability.md
 priority: high
 ---
 
@@ -142,7 +142,7 @@ The final command will be created with:
 This module works closely with:
 - `process-detection.md` for finding reusable processes
 - `_shared.md` for common utilities and principles
-- `meta/slash-command-principles.md` for alignment checks
+- `.meta/slash-command-principles.md` for alignment checks
 
 ## Best Practices
 

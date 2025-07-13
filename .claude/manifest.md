@@ -11,11 +11,11 @@ This manifest tracks all available modules and their loading conditions. It is a
 These modules load automatically when Claude starts a conversation:
 
 ### Core Modules
-- patterns/development/tdd-pattern.md [scope: persistent, priority: critical]
+- shared/patterns/development/tdd-pattern.md [scope: persistent, priority: critical]
   - Reason: Default development methodology enforcing TDD rigor
 - core/principles.md [scope: persistent, priority: critical]
   - Reason: Universal ALWAYS/NEVER rules that must never be forgotten
-- processes/version-control/commit-standards.md [scope: persistent, priority: high]
+- shared/processes/version-control/commit-standards.md [scope: persistent, priority: high]
   - Reason: Ensures consistent commit practices across all work
 
 ## Context Triggers
@@ -23,49 +23,49 @@ Modules that load based on conversation context and keywords:
 
 ### testing
 - keywords: ["test", "TDD", "coverage", "unit test", "integration test", "pytest", "jest", "mocha"]
-- loads: ["processes/testing/*"]
+- loads: ["shared/processes/testing/*"]
 - scope: context
 - priority: high
 
 ### version-control
 - keywords: ["commit", "git", "push", "branch", "merge", "rebase", "cherry-pick"]
-- loads: ["processes/version-control/*"]
+- loads: ["shared/processes/version-control/*"]
 - scope: context
 - priority: high
 
 ### issue-management
 - keywords: ["issue", "ticket", "project", "milestone", "tracking", "github issue", "jira"]
-- loads: ["processes/issue-tracking/*"]
+- loads: ["shared/processes/issue-tracking/*"]
 - scope: context
 - priority: medium
 
 ### code-review
 - keywords: ["review", "analyze codebase", "code quality", "PR", "pull request", "merge request"]
-- loads: ["processes/code-review/*"]
+- loads: ["shared/processes/code-review/*"]
 - scope: context
 - priority: medium
 
 ### security
 - keywords: ["security", "pentest", "vulnerability", "sanitize", "redact", "sensitive data"]
-- loads: ["processes/security/*", "guides/tools/sanitization/*"]
+- loads: ["shared/processes/security/*", "docs/guides/tools/sanitization/*"]
 - scope: context
 - priority: highest
 
 ### feature-development
 - keywords: ["implement", "develop", "new feature", "add functionality", "create component"]
-- loads: ["workflows/feature-development.md", "processes/testing/*", "processes/version-control/*"]
+- loads: ["shared/workflows/feature-development.md", "shared/processes/testing/*", "shared/processes/version-control/*"]
 - scope: context
 - priority: high
 
 ### bug-fixing
 - keywords: ["bug", "fix", "error", "broken", "regression", "debug"]
-- loads: ["workflows/bug-fix.md", "processes/testing/*"]
+- loads: ["shared/workflows/bug-fix.md", "shared/processes/testing/*"]
 - scope: context
 - priority: high
 
 ### refactoring
 - keywords: ["refactor", "clean up", "improve code", "technical debt", "restructure"]
-- loads: ["workflows/refactoring.md", "processes/code-review/*"]
+- loads: ["shared/workflows/refactoring.md", "shared/processes/code-review/*"]
 - scope: context
 - priority: medium
 
@@ -75,13 +75,13 @@ Special modules with override behavior:
 ### pentest-rules
 - scope: locked  # Never unload unless explicit
 - priority: critical  # Overrides all other modules
-- loads: ["processes/security/pentest-guidelines.md"]
+- loads: ["shared/processes/security/pentest-guidelines.md"]
 - trigger: Manual load only
 
 ### emergency-recovery
 - scope: locked
 - priority: critical
-- loads: ["processes/tooling/emergency-procedures.md"]
+- loads: ["shared/processes/tooling/emergency-procedures.md"]
 - trigger: Manual load only
 
 ## Tool Guides (Load on Demand)
@@ -89,19 +89,19 @@ Temporary modules that load for specific tool usage:
 
 ### search-tools
 - triggers: ["grep", "search", "find pattern", "rg", "ripgrep", "ack", "ag"]
-- loads: ["guides/tools/search/*"]
+- loads: ["docs/guides/tools/search/*"]
 - scope: temporary
 - unload-after: 3 interactions
 
 ### sanitization-tools
 - triggers: ["sanitize output", "redact", "clean data", "remove PII", "mask sensitive"]
-- loads: ["guides/tools/sanitization/*", "processes/security/data-sanitization.md"]
+- loads: ["docs/guides/tools/sanitization/*", "shared/processes/security/data-sanitization.md"]
 - scope: temporary
 - unload-after: 5 interactions
 
 ### pre-commit-tools
 - triggers: ["pre-commit", "hook", ".pre-commit-config.yaml", "pre-commit install"]
-- loads: ["processes/tooling/pre-commit-management.md", "processes/tooling/hook-contribution.md"]
+- loads: ["shared/processes/tooling/pre-commit-management.md", "shared/processes/tooling/hook-contribution.md"]
 - scope: context
 - priority: high
 
@@ -109,12 +109,12 @@ Temporary modules that load for specific tool usage:
 Modules that cannot be loaded simultaneously:
 
 ### Development Patterns
-- conflicting-modules: ["patterns/development/tdd-pattern.md", "patterns/development/cdd-pattern.md", "patterns/development/bdd-pattern.md"]
+- conflicting-modules: ["shared/patterns/development/tdd-pattern.md", "shared/patterns/development/cdd-pattern.md", "shared/patterns/development/bdd-pattern.md"]
 - resolution: prompt-for-selection
 - exception: comparison-mode
 
 ### Architecture Styles
-- conflicting-modules: ["patterns/architecture/monolithic.md", "patterns/architecture/microservices.md", "patterns/architecture/serverless.md"]
+- conflicting-modules: ["shared/patterns/architecture/monolithic.md", "shared/patterns/architecture/microservices.md", "shared/patterns/architecture/serverless.md"]
 - resolution: prompt-for-selection
 - exception: comparison-mode
 
@@ -123,7 +123,7 @@ Keywords that trigger module comparison mode:
 
 ### development-methodology
 - triggers: ["which development pattern", "compare TDD", "alternative to TDD", "TDD vs", "not sure about TDD"]
-- loads-for-comparison: ["patterns/development/tdd-pattern.md", "patterns/development/cdd-pattern.md", "patterns/development/bdd-pattern.md"]
+- loads-for-comparison: ["shared/patterns/development/tdd-pattern.md", "shared/patterns/development/cdd-pattern.md", "shared/patterns/development/bdd-pattern.md"]
 - prompt: "I notice you're evaluating development methodologies. Would you like me to load and compare TDD, CDD, and BDD to help determine the best fit?"
 
 ### tool-selection

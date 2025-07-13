@@ -9,7 +9,7 @@ conflicts: []
 dependencies:
   - _shared.md
   - process-detection.md
-  - meta/slash-command-principles.md
+  - .meta/slash-command-principles.md
 priority: medium
 ---
 
@@ -55,7 +55,7 @@ Following the slash command principles:
 
 1. **Search for existing solutions**:
    ```
-   !load processes/meta/determine-prompt-reusability.md
+   !load shared/processes/meta/determine-prompt-reusability.md
    ```
    - Can any existing process provide this feature?
    - Are there patterns we can compose?

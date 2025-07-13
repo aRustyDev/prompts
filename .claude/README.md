@@ -16,8 +16,8 @@ This directory contains the modular memory system for Claude. Instead of loading
 ### Default Modules
 These modules are always loaded:
 - `core/principles.md` - Fundamental ALWAYS/NEVER rules
-- `patterns/development/tdd-pattern.md` - Default development methodology
-- `processes/version-control/commit-standards.md` - Commit conventions
+- `shared/patterns/development/tdd-pattern.md` - Default development methodology
+- `shared/processes/version-control/commit-standards.md` - Commit conventions
 
 ## Directory Structure
 
@@ -28,57 +28,56 @@ These modules are always loaded:
 │   ├── principles.md        # ALWAYS/NEVER rules
 │   ├── defaults.md          # System configurations
 │   └── loader.md            # Module loading logic
-├── processes/               # Step-by-step procedures
-│   ├── testing/            # Testing methodologies
-│   ├── version-control/    # Git workflows
-│   ├── issue-tracking/     # Issue management
-│   ├── code-review/        # Review processes
-│   ├── security/           # Security procedures
-│   └── tooling/            # Tool management
-├── workflows/              # Multi-process orchestrations
-│   ├── feature-development.md
-│   ├── bug-fix.md
-│   └── refactoring.md
-├── patterns/               # Development methodologies
-│   ├── development/        # TDD, CDD, BDD
-│   └── architecture/       # Design patterns
-├── guides/                 # Reference documentation
-│   └── tools/              # Tool usage guides
-├── templates/              # Reusable templates
-└── meta/                   # System management
-    ├── module-creation-guide.md
-    └── module-validation.md
+├── .config/                # Configuration files
+│   ├── project.yaml
+│   ├── logging.yaml
+│   └── memory.yaml
+├── .meta/                  # System management
+│   ├── module-creation-guide.md
+│   └── module-validation.md
+├── shared/                 # Shared resources
+│   ├── processes/          # Step-by-step procedures
+│   ├── workflows/          # Multi-process orchestrations
+│   ├── patterns/           # Development methodologies
+│   ├── templates/          # Reusable templates
+│   ├── roles/              # Expert role definitions
+│   └── schemas/            # Data structures
+├── docs/                   # Documentation
+│   ├── guides/             # Tool usage guides
+│   ├── knowledge/          # Knowledge bases
+│   └── examples/           # Example implementations
+└── commands/               # Slash commands
 ```
 
 ## Module Types
 
 ### Process Modules
 Step-by-step procedures for specific tasks
-- Example: `processes/testing/tdd.md`
+- Example: `shared/processes/testing/tdd.md`
 - Scope: Usually context or persistent
 - Contains: Detailed steps, integration points
 
 ### Workflow Modules
 Orchestrate multiple processes
-- Example: `workflows/feature-development.md`
+- Example: `shared/workflows/feature-development.md`
 - Scope: Context
 - Contains: Process sequence, decision points
 
 ### Pattern Modules
 Define development methodologies
-- Example: `patterns/development/tdd-pattern.md`
+- Example: `shared/patterns/development/tdd-pattern.md`
 - Scope: Persistent or context
 - Contains: Principles, rules, examples
 
 ### Guide Modules
 Reference documentation
-- Example: `guides/tools/search/ripgrep.md`
+- Example: `docs/guides/tools/search/ripgrep.md`
 - Scope: Temporary
 - Contains: Usage examples, tips
 
 ### Meta Modules
 System management and administration
-- Example: `meta/module-creation-guide.md`
+- Example: `.meta/module-creation-guide.md`
 - Scope: Persistent or context
 - Contains: Meta-information about the system
 
@@ -94,8 +93,8 @@ Modules load based on:
 ### Manual Loading
 Use commands to explicitly control modules:
 ```
-!load processes/testing/tdd.md
-!unload guides/tools/search/ripgrep.md
+!load shared/processes/testing/tdd.md
+!unload docs/guides/tools/search/ripgrep.md
 ```
 
 ### Scope Rules
@@ -128,21 +127,21 @@ Use commands to explicitly control modules:
 ## Key Modules
 
 ### Development
-- `processes/testing/tdd.md` - Test-driven development
-- `workflows/feature-development.md` - Feature implementation
-- `processes/code-review/codebase-analysis.md` - Code analysis
+- `shared/processes/testing/tdd.md` - Test-driven development
+- `shared/workflows/feature-development.md` - Feature implementation
+- `shared/processes/code-review/codebase-analysis.md` - Code analysis
 
 ### Version Control
-- `processes/version-control/commit-standards.md` - Commit conventions
-- `processes/version-control/workspace-setup.md` - Branch management
+- `shared/processes/version-control/commit-standards.md` - Commit conventions
+- `shared/processes/version-control/workspace-setup.md` - Branch management
 
 ### Security
-- `processes/security/data-sanitization.md` - Remove sensitive data
-- `processes/tooling/tool-selection.md` - Tool fallback chains
+- `shared/processes/security/data-sanitization.md` - Remove sensitive data
+- `shared/processes/tooling/tool-selection.md` - Tool fallback chains
 
 ### System Management
-- `meta/module-creation-guide.md` - How to create modules
-- `meta/module-validation.md` - Module quality checks
+- `.meta/module-creation-guide.md` - How to create modules
+- `.meta/module-validation.md` - Module quality checks
 
 ## Best Practices
 

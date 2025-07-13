@@ -160,7 +160,7 @@ Create a custom role by combining existing roles and capabilities.
    - Consultation lists combined
 
 ### Output
-Creates a new role file in `.claude/roles/custom/{name}.yaml`
+Creates a new role file in `.claude/shared/roles/custom/{name}.yaml`
 
 ## Subcommand: list
 

@@ -1,0 +1,30 @@
+# Memory Configuration
+# Define memory management settings
+
+memory:
+  module_limits:
+    max_concurrent: 15
+    preload_limit: 5
+    
+  reinforcement:
+    check_interval: 10  # interactions
+    prompt_on_shift: true
+    
+  scopes:
+    locked:
+      priority: 1000
+      auto_unload: false
+      
+    persistent:
+      priority: 100
+      auto_unload: false
+      
+    context:
+      priority: 50
+      auto_unload: true
+      ttl: null  # no timeout
+      
+    temporary:
+      priority: 10
+      auto_unload: true
+      ttl: 3  # interactions

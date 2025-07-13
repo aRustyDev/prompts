@@ -1,0 +1,17 @@
+# Project Configuration
+# Define project-specific settings and preferences
+
+project:
+  name: "claude-system"
+  type: "system"
+  version: "1.0.0"
+  
+defaults:
+  development_pattern: "tdd"
+  branch_prefix: "feature/"
+  commit_style: "conventional"
+  
+tools:
+  version_control: "git"
+  issue_tracker: "github"
+  project_management: "github_projects"

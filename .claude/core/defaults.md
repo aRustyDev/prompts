@@ -20,9 +20,24 @@ This module defines the default tool configurations and settings used across all
 ```yaml
 version_control: git
 default_branch: main
-branch_prefix: feature/
 commit_style: conventional
 merge_strategy: rebase-first
+
+# Branch Naming Conventions
+branch_prefixes:
+  feature: feat/      # New features
+  bugfix: fix/        # Bug fixes
+  refactor: refactor/ # Code refactoring
+  docs: docs/         # Documentation changes
+  test: test/         # Test additions/modifications
+  chore: chore/       # Maintenance tasks
+  performance: perf/  # Performance improvements
+  style: style/       # Code style changes
+  hotfix: hotfix/     # Emergency fixes
+
+# Branch name format: <prefix><issue-number>-<brief-description>
+branch_name_pattern: "^(feat|fix|refactor|docs|test|chore|perf|style|hotfix)/[0-9]+-[a-z0-9-]+$"
+require_issue_number: true
 ```
 
 ### Issue Tracking
@@ -32,6 +47,13 @@ project_management: github_projects
 label_strategy: semantic
 auto_assign: true
 link_commits: true
+
+# GitHub Integration Method
+github_integration:
+  primary: mcp_server      # Try MCP server first
+  fallback: gh_cli         # Fall back to gh CLI
+  mcp_retry_attempts: 3    # Attempts before permanent fallback
+  session_persistence: true # Remember fallback state in session
 ```
 
 ### Development Tools

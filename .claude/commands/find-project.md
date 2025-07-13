@@ -175,7 +175,7 @@ score_modifiers:
 
 ### 1. Project Discovery Phase
 ```
-!load config/project-focus
+!load .config/project-focus
 !load integrations/multi-platform-sync
 
 1. Read focus.yaml configuration
@@ -196,7 +196,7 @@ For each project in focus.yaml:
 ### 3. Analysis Phase
 ```
 !load analysis/project-health-scoring
-!load meta/multi-criteria-ranking
+!load .meta/multi-criteria-ranking
 
 For each project:
   - Calculate health score

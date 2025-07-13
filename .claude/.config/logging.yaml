@@ -1,0 +1,26 @@
+# Logging Configuration
+# Define logging settings and preferences
+
+logging:
+  level: "info"
+  format: "structured"
+  
+  outputs:
+    - type: "file"
+      path: ".log/claude.log"
+      rotation: "daily"
+      retention: "30d"
+    
+    - type: "metrics"
+      path: ".log/metrics/"
+      format: "json"
+  
+  categories:
+    module_loading:
+      level: "debug"
+      
+    command_execution:
+      level: "info"
+      
+    error_handling:
+      level: "error"

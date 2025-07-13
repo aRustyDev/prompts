@@ -96,7 +96,7 @@ processes:
     version: ">=1.0.0"
     usage: "Repository selection and preview formatting"
     
-  - name: meta/context-analysis
+  - name: .meta/context-analysis
     version: ">=1.0.0"
     usage: "Enhanced context gathering from various sources"
     conditional: true
@@ -109,8 +109,8 @@ When any subcommand is invoked, Claude will:
 
 1. **Load Repository Configuration**
    ```bash
-   # Load from config/repositories.yaml
-   REPOS=$(yq eval '.core + .custom' ~/.claude/config/repositories.yaml)
+   # Load from .config/repositories.yaml
+   REPOS=$(yq eval '.core + .custom' ~/.claude/.config/repositories.yaml)
    ```
 
 2. **Interactive Repository Selection**
@@ -235,7 +235,7 @@ Report issues with Claude's behavior when using slash-commands.
    fi
    
    SANITIZED_CONTEXT=$(echo "$FULL_CONTEXT" | \
-     ~/.claude/processes/data-sanitization.sh --remove-pii --truncate 2000)
+     ~/.claude/shared/processes/data-sanitization.sh --remove-pii --truncate 2000)
    ```
 
 5. **Issue Preview & Submission**
@@ -505,7 +505,7 @@ capture_context() {
   # Get recent conversation context
   if [ -n "$CLAUDE_CONVERSATION_FILE" ]; then
     tail -n "$LINES" "$CLAUDE_CONVERSATION_FILE" | \
-      ~/.claude/processes/data-sanitization.sh --remove-pii
+      ~/.claude/shared/processes/data-sanitization.sh --remove-pii
   else
     echo "[No conversation context available]"
   fi
@@ -652,11 +652,11 @@ Claude: Creating feature request for new command...
 - **New Feature**: Added `improvement` subcommand for suggesting enhancements
 - **New Feature**: Enhanced context gathering with `--enhanced-context` flag
 - **New Feature**: Repository-specific templates (e.g., `templates/issues-prompts/`)
-- **New Feature**: Custom repository support via `config/repositories.yaml`
+- **New Feature**: Custom repository support via `.config/repositories.yaml`
 - **Enhancement**: Added `--repo` flag to skip interactive repository selection
 - **Enhancement**: Improved template resolution with repo-specific fallback
 - **Enhancement**: Added diagnostic data collection (logs, git info, system metrics)
-- **Process Integration**: Added `meta/context-analysis` for enhanced context
+- **Process Integration**: Added `.meta/context-analysis` for enhanced context
 - **Configuration**: Added `.gitignore` for custom templates
 
 ### Version 1.1.0

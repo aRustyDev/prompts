@@ -49,4 +49,4 @@ ${RELATED_MODULES}
 
 ---
 
-*This module follows the Claude module standards. For more information, see the [Module Creation Guide](../../core/meta/module-creation-guide.md).*
+*This module follows the Claude module standards. For more information, see the [Module Creation Guide](../../.meta/module-creation-guide.md).*

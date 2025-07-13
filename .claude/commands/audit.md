@@ -113,7 +113,7 @@ Works with:
 - `/optimize` - Performance improvements
 
 ## Implementation
-- **Role**: `roles/base/prompt-auditor.yaml`
-- **Workflow**: `workflows/repository-audit.yaml`
-- **Processes**: `processes/auditing/*`
+- **Role**: `shared/roles/base/prompt-auditor.yaml`
+- **Workflow**: `shared/workflows/repository-audit.yaml`
+- **Processes**: `shared/processes/auditing/*`
 - **Scripts**: `helpers/detect-dead-context.sh`, `helpers/analyze-dependencies.sh`

@@ -20,7 +20,7 @@ This module implements the logic for loading, unloading, and managing modules in
 When a module load is requested (automatic or manual):
 
 ```
-LoadRequest ’ Validation ’ ConflictCheck ’ DependencyResolution ’ Load ’ Verify
+LoadRequest ï¿½ Validation ï¿½ ConflictCheck ï¿½ DependencyResolution ï¿½ Load ï¿½ Verify
 ```
 
 #### Validation Steps
@@ -110,8 +110,8 @@ Never unload:
 Format: [scope] priority | module-name | status | loaded-at
 Example:
 [persistent] critical | core/principles.md | active | start
-[context] high | processes/testing/tdd.md | active | 5 min ago
-[temporary] low | guides/tools/grep.md | expires-in-2 | 1 min ago
+[context] high | shared/processes/testing/tdd.md | active | 5 min ago
+[temporary] low | docs/guides/tools/grep.md | expires-in-2 | 1 min ago
 ```
 
 #### !compare <module1> <module2>
@@ -154,15 +154,15 @@ Every N interactions (configurable):
 ### 6. Error Handling
 
 #### Module Load Failures
-- File not found ’ Suggest similar modules
-- Invalid format ’ Report validation errors
-- Dependency missing ’ Attempt to load dependencies
-- Conflict detected ’ Prompt for resolution
+- File not found ï¿½ Suggest similar modules
+- Invalid format ï¿½ Report validation errors
+- Dependency missing ï¿½ Attempt to load dependencies
+- Conflict detected ï¿½ Prompt for resolution
 
 #### System Errors
-- Memory limit ’ Unload lowest priority modules
-- Circular dependency ’ Reject load, report cycle
-- Corrupted module ’ Quarantine and alert
+- Memory limit ï¿½ Unload lowest priority modules
+- Circular dependency ï¿½ Reject load, report cycle
+- Corrupted module ï¿½ Quarantine and alert
 
 ### 7. Module State Persistence
 

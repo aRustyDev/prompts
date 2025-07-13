@@ -71,17 +71,21 @@ Modules load automatically based on keywords and context. The system follows the
 These modules load when Claude starts a conversation:
 ```yaml
 defaults:
-  - path: patterns/development/tdd-pattern.md
+  - path: shared/patterns/development/tdd-pattern.md
     scope: persistent
     reason: "Default development methodology"
 
-  - path: processes/version-control/commit-standards.md
+  - path: shared/processes/version-control/commit-standards.md
     scope: persistent
     reason: "Universal commit standards"
 
-  - path: core/meta/module-creation-guide.md
+  - path: .meta/module-creation-guide.md
     scope: persistent
     reason: "Needed for consistent module development"
+
+  - path: shared/patterns/github-operations/operation-router.md
+    scope: persistent
+    reason: "GitHub operations with MCP/gh CLI fallback"
 ```
 
 ### Context-Based Loading
@@ -89,44 +93,48 @@ Modules that load when specific contexts are detected:
 ```yaml
 contexts:
   development:
-    triggers: ["implement", "develop", "code", "feature", "fix", "refactor"]
+    triggers: ["implement", "develop", "code", "feature", "fix", "refactor", "start work"]
     loads:
-      - workflows/feature-development.md
-      - processes/testing/*
-      - processes/version-control/*
+      - shared/workflows/issue-driven-development.md
+      - shared/workflows/feature-development.md
+      - shared/processes/testing/*
+      - shared/processes/version-control/*
+      - shared/processes/code-review/pr-review-process.md
     scope: context
 
   testing:
     triggers: ["test", "TDD", "coverage", "unit test", "integration test"]
     loads:
-      - processes/testing/*
+      - shared/processes/testing/*
     scope: context
 
   issue-management:
     triggers: ["issue", "ticket", "project", "milestone", "tracking"]
     loads:
-      - processes/issue-tracking/*
+      - shared/processes/issue-tracking/*
+      - shared/patterns/github-operations/*
+      - mcp/github-mcp/*
     scope: context
 
   code-review:
     triggers: ["review", "analyze codebase", "code quality", "PR"]
     loads:
-      - processes/code-review/*
+      - shared/processes/code-review/*
     scope: context
 
   security:
     triggers: ["security", "pentest", "vulnerability", "sanitize"]
     loads:
-      - processes/security/*
-      - guides/tools/sanitization/*
+      - shared/processes/security/*
+      - shared/guides/tools/sanitization/*
     scope: context
 
   auditing:
     triggers: ["audit", "analyze repository", "find duplicates", "optimization", "dead context", "repository health"]
     loads:
-      - processes/auditing/*
-      - workflows/repository-audit.yaml
-      - roles/base/prompt-auditor.yaml
+      - shared/processes/auditing/*
+      - shared/workflows/repository-audit.yaml
+      - shared/roles/base/prompt-auditor.yaml
     scope: context
 ```
 
@@ -137,13 +145,13 @@ tools:
   search:
     triggers: ["grep", "search", "find", "rg", "ripgrep", "awk"]
     loads:
-      - guides/tools/search/*
+      - shared/guides/tools/search/*
     scope: temporary
 
   sanitization:
     triggers: ["sanitize", "redact", "clean output", "remove sensitive"]
     loads:
-      - guides/tools/sanitization/*
+      - shared/guides/tools/sanitization/*
     scope: temporary
 ```
 
@@ -154,9 +162,9 @@ comparisons:
   development-pattern:
     triggers: ["not sure about TDD", "alternative to", "compare development", "which pattern"]
     options:
-      - patterns/development/tdd-pattern.md
-      - patterns/development/cdd-pattern.md
-      - patterns/development/bdd-pattern.md
+      - shared/patterns/development/tdd-pattern.md
+      - shared/patterns/development/cdd-pattern.md
+      - shared/patterns/development/bdd-pattern.md
     prompt: "I notice you're considering different development approaches. Would you like me to load and compare {options} to determine the best fit for your current situation?"
 ```
 
@@ -164,23 +172,26 @@ comparisons:
 ```
 ~/.claude/
 ├── manifest.md                    # This file (always loaded)
+├── .meta/                        # Meta-modules for system management
+│   ├── module-creation-guide.md
+│   ├── module-validation.md
+│   └── architecture-review.md
 ├── core/
-│   ├── meta/                     # Meta-modules for system management
-│   │   ├── module-creation-guide.md
-│   │   ├── module-validation.md
-│   │   └── architecture-review.md
 │   ├── principles.md
 │   └── loader.md
-├── processes/
-│   ├── testing/
-│   ├── version-control/
-│   ├── issue-tracking/
-│   ├── code-review/
-│   └── security/
-├── workflows/
-├── patterns/
-├── guides/
-└── templates/
+├── shared/
+│   ├── processes/
+│   │   ├── testing/
+│   │   ├── version-control/
+│   │   ├── issue-tracking/
+│   │   ├── code-review/
+│   │   └── security/
+│   ├── workflows/
+│   ├── patterns/
+│   ├── templates/
+│   ├── guides/
+│   └── roles/
+└── docs/
 ```
 
 ## Conflict Resolution
@@ -191,7 +202,7 @@ When modules conflict, Claude follows these rules:
 4. Document conflict resolution for future reference
 
 ## Module Interface Contract
-Every module must follow the standard structure defined in `core/meta/module-creation-guide.md`. Modules failing validation cannot be loaded.
+Every module must follow the standard structure defined in `.meta/module-creation-guide.md`. Modules failing validation cannot be loaded.
 
 ## System Health Monitoring
 Claude tracks:

@@ -8,7 +8,7 @@ triggers:
 conflicts: []
 dependencies:
   - _shared.md
-  - meta/slash-command-principles.md
+  - .meta/slash-command-principles.md
 priority: medium
 ---
 
@@ -182,7 +182,7 @@ Identify code that could be:
 
 This module references:
 - `_shared.md` for review criteria
-- `meta/slash-command-principles.md` for standards
+- `.meta/slash-command-principles.md` for standards
 - Command files for analysis
 
 ## Related Modules

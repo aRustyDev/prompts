@@ -4,8 +4,8 @@ description: Comprehensive slash command management tool for creating, updating,
 author: Claude Code
 version: 3.1.0
 dependencies:
-  - meta/slash-command-principles.md
-  - processes/meta/determine-prompt-reusability.md
+  - .meta/slash-command-principles.md
+  - shared/processes/meta/determine-prompt-reusability.md
 modules:
   - command/init.md
   - command/update.md
@@ -101,9 +101,9 @@ Before gathering new requirements, I'll analyze if any existing processes match 
 #### Process Scanning
 1. **Analyze description keywords** to identify potential process matches
 2. **Search ~/.claude/** for relevant modules:
-   - **processes/** - Step-by-step procedures
-   - **patterns/** - Development patterns
-   - **workflows/** - Complex workflows
+   - **shared/processes/** - Step-by-step procedures
+   - **shared/patterns/** - Development patterns
+   - **shared/workflows/** - Complex workflows
    - **templates/** - Reusable structures
    - **guides/** - How-to documentation
 

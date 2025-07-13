@@ -4,8 +4,8 @@ scope: context
 triggers: []
 conflicts: []
 dependencies:
-  - meta/slash-command-principles.md
-  - processes/meta/determine-prompt-reusability.md
+  - .meta/slash-command-principles.md
+  - shared/processes/meta/determine-prompt-reusability.md
 priority: high
 ---
 
@@ -31,7 +31,7 @@ The main `/project:command` entry handles routing to subcommands:
 
 1. **Always Check Reusability First**:
    ```
-   !load processes/meta/determine-prompt-reusability.md
+   !load shared/processes/meta/determine-prompt-reusability.md
    ```
 
 2. **Document Everything**:
@@ -46,7 +46,7 @@ The main `/project:command` entry handles routing to subcommands:
 
 4. **Follow the Principles**:
    ```
-   !load meta/slash-command-principles.md
+   !load .meta/slash-command-principles.md
    ```
 
 ## Success Metrics
